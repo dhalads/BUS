@@ -20,6 +20,30 @@ from matplotlib import cm
 import cv2
 from BUSSegmentor import BUSSegmentor
 
+
+# def show_images(images: List[numpy.ndarray]) -> None:
+def show_images(images):
+    n: int = len(images)
+    f = plt.figure()
+    for i in range(n):
+        # Debug, plot figure
+        # f.add_subplot(1, n, i + 1)
+        ax = f.add_subplot(3, 2, i + 1)
+        ax.title.set_text(images[i][0])
+        plt.imshow(images[i][1])
+
+    plt.show(block=True)
+
+def plot4():
+    list = []
+    list.append(("original", seg.image))
+    list.append(("GT", seg.imageGT))
+    # list.append(seg.imageCorner)
+    list.append(("internal zone", seg.imageROICropped))
+    list.append(("posterior zone", seg.imagePosterior))
+    output = {"images":list}
+    show_images(list)
+
 def plot():
     fig = plt.figure()
     ax = fig.add_subplot(131, projection='3d')
@@ -43,7 +67,7 @@ def plot3():
     cv2.namedWindow("GT")
     cv2.namedWindow("corner")
     cv2.imshow('original', seg.image)
-    cv2.imshow('GT', seg.imageGT)
+    cv2.imshow('ROI', seg.imageGT)
     cv2.imshow('corner', seg.imageCorner)
     cv2.waitKey()
     cv2.destroyAllWindows()
@@ -51,11 +75,18 @@ def plot3():
 seg = BUSSegmentor()
 seg.loadImage("000002.png")
 print(seg.image.shape)
-print(type(seg.image))
 seg.loadImageGT()
 print(seg.imageGT.shape)
 seg.createCornerImage()
-plot2()
+print(seg.image[0][0])
+print(seg.imageGT[0][0])
+print(seg.imageCorner[0][0])
+print(type(seg.image))
+print(type(seg.imageGT))
+print(type(seg.imageCorner))
+seg.cropContourROI()
+seg.cropPosteriorZone()
+plot4()
 
 
 
