@@ -80,7 +80,7 @@ clicks = []
 # img_path = "Datasets/BUS_Dataset_B/original/000001.png"
 img_path = "C:/Users/djhalama/Documents/Education/DS-785/BUS Project Home/Datasets/BUS_Dataset_B/original/000018.png"
 image = cv2.imread(img_path, 0)
-
+print(type(image))
 ret, img = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY)
 cv2.namedWindow('Input')
 cv2.setMouseCallback('Input', on_mouse, 0, )
