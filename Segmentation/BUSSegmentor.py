@@ -123,6 +123,7 @@ class BUSSegmentor(object):
         self.imageMarginal = cropped_contour
 
     def scale_contour(self, cnt, scale):
+        # https://medium.com/analytics-vidhya/tutorial-how-to-scale-and-rotate-contours-in-opencv-using-python-f48be59c35a2
         M = cv2.moments(cnt)
         cx = int(M['m10']/M['m00'])
         cy = int(M['m01']/M['m00'])
