@@ -24,7 +24,7 @@ from BUSSegmentor import BUSSegmentor
 # def show_images(images: List[numpy.ndarray]) -> None:
 def show_images(images):
     n: int = len(images)
-    f = plt.figure()
+    f = plt.figure(figsize=(16,20))
     for i in range(n):
         # Debug, plot figure
         # f.add_subplot(1, n, i + 1)
