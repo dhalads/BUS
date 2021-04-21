@@ -22,8 +22,10 @@ class BUSSegmentor(object):
     imageName = None
     imageGT = None
     imageCorner = None
+    imageBoxROI = None
     imageROICropped = None
     imagePosterior = None
+    imageMarginal = None
 
     def __init__(self):
         pass
@@ -62,14 +64,14 @@ class BUSSegmentor(object):
                 self.imageCorner[i][j] = 255
         pass
 
-    def cropROI(self):
+    def cropBoxROI(self):
         edges= cv2.Canny(self.imageGT, 50,200)
         contours, hierarchy= cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         sorted_contours= sorted(contours, key=cv2.contourArea, reverse= True)
         for (i,c) in enumerate(sorted_contours):
             x,y,w,h= cv2.boundingRect(c)
             cropped_contour= self.image[y:y+h, x:x+w]
-        self.imageROICropped = cropped_contour
+        self.imageBoxROI = cropped_contour
 
     def cropContourROI(self):
         # https://stackoverflow.com/questions/28759253/how-to-crop-the-internal-area-of-a-contour
@@ -83,6 +85,7 @@ class BUSSegmentor(object):
         self.imageROICropped = out
 
     def cropPosteriorZone(self):
+        # https://www.pyimagesearch.com/2015/02/09/removing-contours-image-using-python-opencv/
         edges= cv2.Canny(self.imageGT, 50,200)
         contours, hierarchy= cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         for (i,c) in enumerate(contours):
@@ -92,3 +95,41 @@ class BUSSegmentor(object):
         limage = cv2.bitwise_and(self.image, self.image, mask=mask)
         imageh, imagew = self.image.shape
         self.imagePosterior= limage[y+h//2:imageh, x:x+w]
+
+    def cropMarginalZone(self):
+        edges= cv2.Canny(self.imageGT, 50,200)
+        contours, hierarchy= cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        for (i,c) in enumerate(contours):
+            contours[i] = self.scale_contour(c, 1.5)
+            mask_in = np.ones(self.image.shape[:2], dtype="uint8") * 255
+
+        idx = 0 # The index of the contour that surrounds your object
+        mask_out = np.zeros_like(self.image) # Create mask where white is what we want, black otherwise
+        cv2.drawContours(mask_out, contours, idx, 255, -1) # Draw filled contour in mask
+        out = np.zeros_like(self.image) # Extract out the object and place into output image
+        out[mask_out == 255] = self.image[mask_out == 255]
+        cv2.drawContours(mask_in, [c], -1, 0, -1)
+        limage = cv2.bitwise_and(out, out, mask=mask_in)
+        self.imageMarginal = limage
+
+    def cropMarginalZone2(self):
+        edges= cv2.Canny(self.imageGT, 50,200)
+        contours, hierarchy= cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        sorted_contours= sorted(contours, key=cv2.contourArea, reverse= True)
+        for (i,c) in enumerate(sorted_contours):
+            c = self.scale_contour(c, 1.5)
+            x,y,w,h= cv2.boundingRect(c)
+            cropped_contour= self.image[y:y+h, x:x+w]
+        self.imageMarginal = cropped_contour
+
+    def scale_contour(self, cnt, scale):
+        M = cv2.moments(cnt)
+        cx = int(M['m10']/M['m00'])
+        cy = int(M['m01']/M['m00'])
+
+        cnt_norm = cnt - [cx, cy]
+        cnt_scaled = cnt_norm * scale
+        cnt_scaled = cnt_scaled + [cx, cy]
+        cnt_scaled = cnt_scaled.astype(np.int32)
+
+        return cnt_scaled

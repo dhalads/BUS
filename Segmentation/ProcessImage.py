@@ -38,9 +38,10 @@ def plot4():
     list = []
     list.append(("original", seg.image))
     list.append(("GT", seg.imageGT))
-    # list.append(seg.imageCorner)
+    list.append(("Box ROI", seg.imageBoxROI))
     list.append(("internal zone", seg.imageROICropped))
     list.append(("posterior zone", seg.imagePosterior))
+    list.append(("marginal zone", seg.imageMarginal))
     output = {"images":list}
     show_images(list)
 
@@ -84,8 +85,10 @@ print(seg.imageCorner[0][0])
 print(type(seg.image))
 print(type(seg.imageGT))
 print(type(seg.imageCorner))
+seg.cropBoxROI()
 seg.cropContourROI()
 seg.cropPosteriorZone()
+seg.cropMarginalZone()
 plot4()
 
 
