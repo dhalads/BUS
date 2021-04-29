@@ -71,6 +71,7 @@ df = df.dropna()
 df = df.assign(ID = lambda x: stripID(x['Sample name']))
 df["ID"] = pd.to_numeric(df["ID"])
 df = df.drop(columns=["Sample name", "ID"])
+df['Biopsy'] = df['BI-RADS'].apply(lambda x: 'No' if x in ['1', '2', '3'] else 'Yes')
 print(df.info())
 display(missing_values_table(df))
 print(f"The shape is {df.shape}")
@@ -85,17 +86,27 @@ from pycaret.classification import *
 # clf1 = setup(df, target = 'BI-RADS', imputation_type='iterative', session_id=123, log_experiment=True, experiment_name='exp1',fix_imbalance=True,
 #  ignore_features=["Histology"], feature_selection=True)
 
-clf1 = setup(df, target = 'Histology', imputation_type='iterative', session_id=123, log_experiment=False, experiment_name='exp1',fix_imbalance=True,
- ignore_features=["BI-RADS"])
+clf1 = setup(df, target = 'Biopsy', imputation_type='iterative', session_id=123, log_experiment=False, experiment_name='exp1',fix_imbalance=True,
+ ignore_features=["BI-RADS", 'Histology'], html=False, silent=True)
 
-best_model = compare_models()
+best_model = compare_models(include=['knn', 'lr'])
 
 display(best_model)
 
-# model = create_model('lda')
 
-# tuned_model = tune_model(model)
+def on_close(event):
+    print('Closed Figure!')
 
-# plot_model(tuned_model,plot='auc')
+model = create_model('lr')
 
-# plot_model(tuned_model, plot='feature')
+tuned_model = tune_model(model)
+f = plt.figure(figsize=(12,16))
+f.add_subplot(2, 1, 1)
+# f.canvas.mpl_connect('close_event', on_close)
+plot_model(tuned_model, plot='auc')
+f.add_subplot(2, 1, 2)
+plot_model(tuned_model, plot='feature')
+
+#  ,display_format="streamlit"
+# grid.arrange(plt1, plt2)
+# plot_grid(c(plt1, plt2))
