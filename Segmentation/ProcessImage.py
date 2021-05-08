@@ -19,6 +19,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import cv2
 from BUSSegmentor import BUSSegmentor
+# for reading files from urls
+import urllib.request
+# display imports
+from IPython.display import display, IFrame
+from IPython.core.display import HTML
 
 
 # def show_images(images: List[numpy.ndarray]) -> None:
@@ -28,7 +33,7 @@ def show_images(images):
     for i in range(n):
         # Debug, plot figure
         # f.add_subplot(1, n, i + 1)
-        ax = f.add_subplot(3, 2, i + 1)
+        ax = f.add_subplot(4, 2, i + 1)
         ax.title.set_text(images[i][0])
         plt.imshow(images[i][1])
 
@@ -42,6 +47,8 @@ def plot4():
     list.append(("internal zone", seg.imageROICropped))
     list.append(("posterior zone", seg.imagePosterior))
     list.append(("marginal zone", seg.imageMarginal))
+    list.append(("Canny Edge", seg.imageCannyEdge))
+    list.append(("Contour", seg.imageContours))
     output = {"images":list}
     show_images(list)
 
@@ -74,7 +81,7 @@ def plot3():
     cv2.destroyAllWindows()
 
 seg = BUSSegmentor()
-seg.loadImage("000002.png")
+seg.loadImage("000028.png")
 # print(seg.image.shape)
 seg.loadImageGT()
 # print(seg.imageGT.shape)
@@ -89,7 +96,9 @@ seg.cropBoxROI()
 seg.cropContourROI()
 seg.cropPosteriorZone()
 seg.cropMarginalZone()
+seg.createCannyEdgedImage()
 plot4()
+
 
 
 

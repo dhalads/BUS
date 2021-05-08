@@ -15,6 +15,8 @@ import os.path
 from pathlib import Path
 from Common import Common
 import cv2
+import pandas as pd
+
 
 class BUSSegmentor(object):
 
@@ -26,6 +28,9 @@ class BUSSegmentor(object):
     imageROICropped = None
     imagePosterior = None
     imageMarginal = None
+    imageCannyEdge = None
+    imageContours = None
+    contourStats = None
 
     def __init__(self):
         pass
@@ -134,3 +139,115 @@ class BUSSegmentor(object):
         cnt_scaled = cnt_scaled.astype(np.int32)
 
         return cnt_scaled
+
+    def createCannyEdgedImage(self):
+        print("help2")
+        # gray=cv2.cvtColor(self.image,cv2.COLOR_BGR2GRAY)
+        edged=cv2.Canny(self.image,30,200)
+        self.imageCannyEdge = edged
+        contourImage = self.image.copy()
+        # contourImage = cv2.blur(contourImage, (5,5))
+        mean = cv2.mean(contourImage)
+        mean = int(mean[0])
+        mythres = 255 - (255-mean)*0.5
+        ret, thresh = cv2.threshold(contourImage, mythres, 255, type=0)
+        contours, hierarchy= cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        self.imageCannyEdge = thresh
+        # self.imageContours = contourImage
+        # print(contours)
+        print('Numbers of contours found=' + str(len(contours)))
+        stats = [self.createContourStats(x, contours[x]) for x in range(len(contours))]
+        # print(stats)
+        df = pd.DataFrame(stats)
+        self.contourStats = df
+        # df[df.columns.difference(["cnt"])].to_csv('stats.csv')
+        filter_cnt = df.loc[(df['area'] > 200) & (df['area'] < 8000000)]
+        # sort_cnt = df.sort_values(by=['area'], ascending=False, inplace=True).head(n=10)
+        tmpImg = self.image.copy()
+        cntList = filter_cnt['cnt'].tolist()
+        print('Numbers of contours plotted=' + str(len(cntList)))
+        cv2.drawContours(tmpImg, cntList, -1, (0,255,0))
+        self.imageContours = tmpImg
+        # stats = regionprops(BW, 'basic')
+
+    def createContourStats(self, id, cnt):
+        output = {}
+        output["id"] = id
+        x,y,w,h = cv2.boundingRect(cnt)
+        aspect_ratio = float(w)/h
+        area = cv2.contourArea(cnt)
+        output['aspect_ratio'] = aspect_ratio
+        output['area'] = area
+
+        # x,y,w,h = cv.boundingRect(cnt)
+        rect_area = w*h
+        extent = float(area)/rect_area
+        output['extent'] = extent
+
+        # area = cv.contourArea(cnt)
+        hull = cv2.convexHull(cnt)
+        hull_area = cv2.contourArea(hull)
+        if hull_area != 0 :
+            solidity = float(area)/hull_area
+        else:
+            solidity = 0
+        output['solidity'] = solidity
+
+        # area = cv.contourArea(cnt)
+        equi_diameter = np.sqrt(4*area/np.pi)
+
+        if cnt.shape[0] >= 5 :
+            (x,y),(MA,ma),angle = cv2.fitEllipse(cnt)
+        else:
+            angle = None
+        output['angle'] = angle
+
+        mask = np.zeros(self.image.shape,np.uint8)
+        cv2.drawContours(mask,[cnt],0,255,-1)
+        pixelpoints = np.transpose(np.nonzero(mask))
+        #pixelpoints = cv.findNonZero(mask)
+
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(self.image,mask = mask)
+        output['min_val'] = min_val
+        output['max_val'] = max_val
+        output['min_loc'] = min_loc
+        output['max_loc'] = max_loc
+
+
+        mean_val = cv2.mean(self.image,mask = mask)
+        output['mean_val'] = mean_val
+
+        leftmost = tuple(cnt[cnt[:,:,0].argmin()][0])
+        rightmost = tuple(cnt[cnt[:,:,0].argmax()][0])
+        topmost = tuple(cnt[cnt[:,:,1].argmin()][0])
+        bottommost = tuple(cnt[cnt[:,:,1].argmax()][0])
+        output['leftmost'] = leftmost
+        output['rightmost'] = rightmost
+        output['topmost'] = topmost
+        output['bottommost'] = bottommost
+
+        # https://docs.opencv.org/3.4/dd/d49/tutorial_py_contour_features.html
+        M = cv2.moments(cnt)
+        if area > 0 :
+            cx = int(M['m10']/M['m00'])
+            cy = int(M['m01']/M['m00'])
+        else:
+            cx = None
+            cy = None
+        output['cx'] = cx
+        output['cy'] = cy
+        perimeter = cv2.arcLength(cnt,True)
+        output['perimeter'] = perimeter
+        output['cnt'] = cnt
+
+        return(output)
+
+    def combineContours(self):
+        # https://stackoverflow.com/questions/44501723/how-to-merge-contours-in-opencv
+        list_of_pts = []
+        # for ctr in ctrs_to_merge
+        #     list_of_pts += [pt[0] for pt in ctr]
+        # ctr = np.array(list_of_pts).reshape((-1,1,2)).astype(np.int32)
+        # ctr = cv2.convexHull(ctr) # done.
+        # https://dsp.stackexchange.com/questions/2564/opencv-c-connect-nearby-contours-based-on-distance-between-them
+

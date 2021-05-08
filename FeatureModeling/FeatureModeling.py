@@ -101,11 +101,14 @@ model = create_model('lr')
 
 tuned_model = tune_model(model)
 f = plt.figure(figsize=(12,16))
-f.add_subplot(2, 1, 1)
+f.add_subplot(3, 1, 1)
 # f.canvas.mpl_connect('close_event', on_close)
+#  https://pycaret.org/plot-model/
 plot_model(tuned_model, plot='auc')
 f.add_subplot(2, 1, 2)
 plot_model(tuned_model, plot='feature')
+plot_model(tuned_model, plot='confusion_matrix')
+plot_model(tuned_model, plot='threshold')
 
 #  ,display_format="streamlit"
 # grid.arrange(plt1, plt2)
