@@ -1,0 +1,2 @@
+class SegmentationError(Exception):
+    pass

@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "filters": {
+    "io_filter": {
+      "name": "app.io"
+    }
+  },
+  "formatters": {
+    "simple": {
+      "format": "%(asctime)s - %(message)s",
+      "datefmt": "%y%j-%H%M%S"
+
+    },
+    "detailed": {
+      "format": "%(asctime)s - %(pathname) - %(lineno) - %(message)s"
+    },
+    "basic": {
+      "format": "%(asctime)s:%(levelname)s:%(name)s:%(message)s",
+      "datefmt": "%Y%m%d-%H%M%S"
+    }
+  },
+  "handlers": {
+    "stderr": {
+      "class": "logging.StreamHandler",
+      "level": "INFO",
+      "filters": ["io_filter"],
+      "formatter": "simple",
+      "stream": "ext://sys.stderr"
+    },
+    "alert": {
+      "class": "logging.handlers.SMTPHandler",
+      "level": "ERROR",
+      "formatter": "detailed",
+      "mailhost": "smtp.skynet.com",
+      "fromaddr": "logging@skynet.com",
+      "toaddrs": [ "admin1@skynet.com", "admin2@skynet.com" ],
+      "subject": "System Alert"
+    },
+    "fileA": {
+      "class": "logging.FileHandler",
+      "level": "DEBUG",
+      "formatter": "basic",
+      "mode": "a",
+      "filename": "BUS.log"
+    },
+    "fileW": {
+      "class": "logging.FileHandler",
+      "level": "DEBUG",
+      "formatter": "basic",
+      "mode": "w",
+      "filename": "BUS_W.log"
+    }
+  },
+  "loggers": {
+    "BUS": {
+      "handlers": ["stderr", "fileA", "fileW"],
+      "level": "DEBUG"
+    },
+    "app.io": {
+      "level": "INFO"
+    }
+  }
+
+}

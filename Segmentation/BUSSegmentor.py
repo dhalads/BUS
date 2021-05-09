@@ -16,10 +16,14 @@ from pathlib import Path
 from Common import Common
 import cv2
 import pandas as pd
+import logging
 
 
 class BUSSegmentor(object):
 
+    logger = logging.getLogger("BUS." + __name__)
+
+    images = {}
     image = None
     imageName = None
     imageGT = None
@@ -34,6 +38,15 @@ class BUSSegmentor(object):
 
     def __init__(self):
         pass
+        self.logger.debug("in init")
+
+    def addImage(self, name, image, roiStats, annotation, response):
+        output = {}
+        output['image'] = image
+        output['roiStats'] = roiStats
+        output['annotations']= annotation
+        output['response'] = response
+        self.images[name] = output
 
     def loadImage(self, filename):
         self.imageName = filename
@@ -160,7 +173,7 @@ class BUSSegmentor(object):
         # print(stats)
         df = pd.DataFrame(stats)
         self.contourStats = df
-        # df[df.columns.difference(["cnt"])].to_csv('stats.csv')
+        df[df.columns.difference(["cnt"])].to_csv('stats.csv')
         filter_cnt = df.loc[(df['area'] > 200) & (df['area'] < 8000000)]
         # sort_cnt = df.sort_values(by=['area'], ascending=False, inplace=True).head(n=10)
         tmpImg = self.image.copy()

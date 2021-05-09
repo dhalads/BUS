@@ -19,12 +19,13 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import cv2
 from BUSSegmentor import BUSSegmentor
+from BUSSegmentorList import BUSSegmentorList
 # for reading files from urls
 import urllib.request
 # display imports
 from IPython.display import display, IFrame
 from IPython.core.display import HTML
-
+import logging
 
 # def show_images(images: List[numpy.ndarray]) -> None:
 def show_images(images):
@@ -80,6 +81,18 @@ def plot3():
     cv2.waitKey()
     cv2.destroyAllWindows()
 
+import json, logging.config
+
+# https://coralogix.com/log-analytics-blog/python-logging-best-practices-tips/
+with open('logging-config.json', 'rt') as f:
+  config = json.load(f)
+  logging.config.dictConfig(config)
+
+logger = logging.getLogger("BUS")
+logger.debug("My fist one.")
+segList = BUSSegmentorList()
+ids = (2,)
+segList.loadDataSetB(ids)
 seg = BUSSegmentor()
 seg.loadImage("000028.png")
 # print(seg.image.shape)
@@ -97,7 +110,7 @@ seg.cropContourROI()
 seg.cropPosteriorZone()
 seg.cropMarginalZone()
 seg.createCannyEdgedImage()
-plot4()
+# plot4()
 
 
 
