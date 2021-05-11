@@ -14,6 +14,7 @@ from matplotlib import cm
 import os.path
 from pathlib import Path
 from Common import Common
+from exceptions import SegmentationError
 import cv2
 import pandas as pd
 import logging
@@ -23,6 +24,7 @@ class BUSSegmentor(object):
 
     logger = logging.getLogger("BUS." + __name__)
 
+    id = None
     images = {}
     image = None
     imageName = None
@@ -53,16 +55,16 @@ class BUSSegmentor(object):
         path = Common.getImagePath()
         path = path / "original" / filename
         image = Image.open(path).convert('L') # Make sure to convert to grayscale
-        image_inv = ImageOps.invert(image)
-        bus = asarray(image_inv)
+        # image_inv = ImageOps.invert(image)
+        bus = asarray(image)
         self.image = bus
 
     def loadImageGT(self):
         path = Common.getImagePath()
         path = path / "GT" / self.imageName
         image = Image.open(path).convert('L') # Make sure to convert to grayscale
-        image_inv = ImageOps.invert(image)
-        bus = asarray(image_inv)
+        # image_inv = ImageOps.invert(image)
+        bus = asarray(image)
         self.imageGT = bus
 
     def examineFilename(self, filename):
@@ -81,6 +83,24 @@ class BUSSegmentor(object):
             for j in range(30):
                 self.imageCorner[i][j] = 255
         pass
+
+    def getGTContour(self):
+        # contourImage = self.image.copy()
+        # # contourImage = cv2.blur(contourImage, (5,5))
+        # mean = cv2.mean(contourImage)
+        # mean = int(mean[0])
+        # mythres = 255 - (255-mean)*0.5
+        # ret, thresh = cv2.threshold(contourImage, mythres, 255, type=0)
+        # contours, hierarchy= cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        edges= cv2.Canny(self.imageGT, 50,200)
+        contours, hierarchy= cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        sorted_contours= sorted(contours, key=cv2.contourArea, reverse= True)
+        size = len(sorted_contours)
+        if size>0 :
+            return(sorted_contours[0])
+        else:
+            return None
+            # raise SegmentationError("failed to get contour")
 
     def cropBoxROI(self):
         edges= cv2.Canny(self.imageGT, 50,200)
@@ -179,18 +199,27 @@ class BUSSegmentor(object):
         tmpImg = self.image.copy()
         cntList = filter_cnt['cnt'].tolist()
         print('Numbers of contours plotted=' + str(len(cntList)))
-        cv2.drawContours(tmpImg, cntList, -1, (0,255,0))
+        cv2.drawContours(tmpImg, cntList, -1, (0,255,0), 10)
         self.imageContours = tmpImg
         # stats = regionprops(BW, 'basic')
 
-    def createContourStats(self, id, cnt):
+    def createContourStats(self, cnt_id, cnt):
         output = {}
-        output["id"] = id
+        output['imageName'] = self.imageName
+        if cnt_id is not None:
+            output["cnt_id"] = cnt_id
         x,y,w,h = cv2.boundingRect(cnt)
         aspect_ratio = float(w)/h
         area = cv2.contourArea(cnt)
         output['aspect_ratio'] = aspect_ratio
         output['area'] = area
+
+        output['leftx'] = x
+        output['rightx'] = x + w
+        output['topy'] = y
+        output['bottomy'] = y + h
+        output['width'] = w
+        output['height'] = h
 
         # x,y,w,h = cv.boundingRect(cnt)
         rect_area = w*h
@@ -251,7 +280,8 @@ class BUSSegmentor(object):
         output['cy'] = cy
         perimeter = cv2.arcLength(cnt,True)
         output['perimeter'] = perimeter
-        output['cnt'] = cnt
+        if cnt_id is not None:
+            output['cnt'] = cnt
 
         return(output)
 

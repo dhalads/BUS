@@ -1,16 +1,16 @@
 # computational imports
 import numpy as np
 import pandas as pd
-from ast import literal_eval
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
+# from ast import literal_eval
+# from sklearn.feature_extraction.text import CountVectorizer
+# from sklearn.metrics.pairwise import cosine_similarity
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.metrics.pairwise import linear_kernel
 
 # plotting imports
 import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set_style("darkgrid")
+# import seaborn as sns
+# sns.set_style("darkgrid")
 # for reading files from urls
 import urllib.request
 # display imports
