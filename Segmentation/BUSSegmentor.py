@@ -27,8 +27,10 @@ class BUSSegmentor(object):
     id = None
     images = {}
     image = None
+    PILimage = None
     imageName = None
     imageGT = None
+    PILimageGT = None
     imageCorner = None
     imageBoxROI = None
     imageROICropped = None
@@ -55,17 +57,21 @@ class BUSSegmentor(object):
         path = Common.getImagePath()
         path = path / "original" / filename
         image = Image.open(path).convert('L') # Make sure to convert to grayscale
-        # image_inv = ImageOps.invert(image)
-        bus = asarray(image)
+        # image = Image.open(path)
+        self.PILimage= image
+        image_inv = ImageOps.invert(image)
+        bus = asarray(image_inv)
         self.image = bus
 
     def loadImageGT(self):
         path = Common.getImagePath()
         path = path / "GT" / self.imageName
         image = Image.open(path).convert('L') # Make sure to convert to grayscale
+        self.PILimageGT = image
         # image_inv = ImageOps.invert(image)
         bus = asarray(image)
         self.imageGT = bus
+
 
     def examineFilename(self, filename):
         # pathfile = Path(filename)
@@ -92,8 +98,7 @@ class BUSSegmentor(object):
         # mythres = 255 - (255-mean)*0.5
         # ret, thresh = cv2.threshold(contourImage, mythres, 255, type=0)
         # contours, hierarchy= cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        edges= cv2.Canny(self.imageGT, 50,200)
-        contours, hierarchy= cv2.findContours(edges.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        contours, hierarchy= cv2.findContours(self.imageGT, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         sorted_contours= sorted(contours, key=cv2.contourArea, reverse= True)
         size = len(sorted_contours)
         if size>0 :
@@ -173,18 +178,79 @@ class BUSSegmentor(object):
 
         return cnt_scaled
 
+    def findContours(self, addImages=False):
+        # https://automaticaddison.com/how-to-detect-and-draw-contours-in-images-using-opencv/
+        orig = asarray(self.PILimage)
+        if addImages:
+            self.addImage("Original", orig, None, None, None)
+            self.addImage("GT", self.imageGT, None, None, None)
+        tmpImg = self.image.copy()
+        GTcnt = self.getGTContour()
+        cv2.drawContours(tmpImg, GTcnt , -1, (0,255,0), 5)
+        if addImages:
+            self.addImage("Gray Inverted with GT", tmpImg, None, None, None)
+        # Convert the grayscale image to binary
+        mean = cv2.mean(tmpImg)
+        mean = int(mean[0])
+        mythres = 255 - (255-mean)*0.5
+        ret, binary = cv2.threshold(self.image, mythres, 255, 0)
+        if addImages:
+            self.addImage("Binary", binary, None, None, None)
+
+        # Find the contours on the inverted binary image, and store them in a list
+        # Contours are drawn around white blobs.
+        # hierarchy variable contains info on the relationship between the contours
+        contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+        # Draw the contours (in red) on the original image and display the result
+        # Input color code is in BGR (blue, green, red) format
+        # -1 means to draw all contours
+        with_contours = cv2.drawContours(self.image.copy(), contours, -1,(0, 255, 0),1)
+        if addImages:
+            self.addImage("With Contours", with_contours, None, None, None)
+
+        # Show the total number of contours that were detected
+        print('Total number of contours detected: ' + str(len(contours)))
+        stats = [self.createContourStats(x, contours[x], GTcnt) for x in range(len(contours))]
+        # print(stats)
+        df = pd.DataFrame(stats)
+        self.contourStats = df
+        # df[df.columns.difference(["cnt"])].to_csv('stats.csv')
+        df1 = df.loc[(df['area'] > 300) & (df['area'] < 100000)]
+        shape1 = self.image.shape
+        df2 = df1.loc[(df1['leftx'] > 30 ) & (df1['rightx'] < shape1[1] - 30) & (df1['topy'] > 30) & (df1['bottomy'] < shape1[0] - 30) & (df1['aspect_ratio'] < 5.5)]
+        # df2.sort_values(by=['area'], ascending=False, inplace=True)
+        df2.sort_values(by=['mean_val'], ascending=False, inplace=True)
+        self.logger.debug("\n" + str(df2[df2.columns.difference(["cnt"])]))
+        tmpImg = self.image.copy()
+        cntList = df2['cnt'].tolist()
+        print('Numbers of contours plotted=' + str(len(cntList)))
+        if len(cntList) > 0 :
+            bestCntId = df2['cnt_id'].tolist()[0]
+            if addImages:
+                cv2.drawContours(tmpImg, cntList, 0, (0,255,0), 1)
+                self.addImage("WithFilteredContours", tmpImg, None, None, None)
+            bestCnt = cntList[0]
+            bestStats = stats[bestCntId]
+        else:
+            bestCnt = None
+            bestStats = None
+        return((bestCnt, bestStats))
+
     def createCannyEdgedImage(self):
         print("help2")
-        # gray=cv2.cvtColor(self.image,cv2.COLOR_BGR2GRAY)
+        #
         edged=cv2.Canny(self.image,30,200)
         self.imageCannyEdge = edged
         contourImage = self.image.copy()
+        # gray=cv2.cvtColor(contourImage,cv2.COLOR_BGR2GRAY)
         # contourImage = cv2.blur(contourImage, (5,5))
         mean = cv2.mean(contourImage)
         mean = int(mean[0])
         mythres = 255 - (255-mean)*0.5
         ret, thresh = cv2.threshold(contourImage, mythres, 255, type=0)
         contours, hierarchy= cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        inverted_binary = ~thresh
         self.imageCannyEdge = thresh
         # self.imageContours = contourImage
         # print(contours)
@@ -193,7 +259,7 @@ class BUSSegmentor(object):
         # print(stats)
         df = pd.DataFrame(stats)
         self.contourStats = df
-        df[df.columns.difference(["cnt"])].to_csv('stats.csv')
+        # df[df.columns.difference(["cnt"])].to_csv('stats.csv')
         filter_cnt = df.loc[(df['area'] > 200) & (df['area'] < 8000000)]
         # sort_cnt = df.sort_values(by=['area'], ascending=False, inplace=True).head(n=10)
         tmpImg = self.image.copy()
@@ -203,8 +269,9 @@ class BUSSegmentor(object):
         self.imageContours = tmpImg
         # stats = regionprops(BW, 'basic')
 
-    def createContourStats(self, cnt_id, cnt):
+    def createContourStats(self, cnt_id, cnt, GTcnt=None):
         output = {}
+        output['id'] = self.id
         output['imageName'] = self.imageName
         if cnt_id is not None:
             output["cnt_id"] = cnt_id
@@ -213,6 +280,11 @@ class BUSSegmentor(object):
         area = cv2.contourArea(cnt)
         output['aspect_ratio'] = aspect_ratio
         output['area'] = area
+
+        if GTcnt is not None :
+            areaGT = cv2.contourArea(GTcnt)
+            areaFracGT = area/areaGT
+            output['areaFracGT'] = areaFracGT
 
         output['leftx'] = x
         output['rightx'] = x + w
@@ -257,16 +329,16 @@ class BUSSegmentor(object):
 
 
         mean_val = cv2.mean(self.image,mask = mask)
-        output['mean_val'] = mean_val
+        output['mean_val'] = mean_val[0]
 
         leftmost = tuple(cnt[cnt[:,:,0].argmin()][0])
         rightmost = tuple(cnt[cnt[:,:,0].argmax()][0])
         topmost = tuple(cnt[cnt[:,:,1].argmin()][0])
         bottommost = tuple(cnt[cnt[:,:,1].argmax()][0])
-        output['leftmost'] = leftmost
-        output['rightmost'] = rightmost
-        output['topmost'] = topmost
-        output['bottommost'] = bottommost
+        # output['leftmost'] = leftmost
+        # output['rightmost'] = rightmost
+        # output['topmost'] = topmost
+        # output['bottommost'] = bottommost
 
         # https://docs.opencv.org/3.4/dd/d49/tutorial_py_contour_features.html
         M = cv2.moments(cnt)
@@ -278,6 +350,10 @@ class BUSSegmentor(object):
             cy = None
         output['cx'] = cx
         output['cy'] = cy
+        if (cx is not None) and (GTcnt is not None) :
+            # https://stackoverflow.com/questions/50670326/how-to-check-if-point-is-placed-inside-contour
+            dist = cv2.pointPolygonTest(GTcnt,(cx,cy),False)
+            output['dist'] = dist
         perimeter = cv2.arcLength(cnt,True)
         output['perimeter'] = perimeter
         if cnt_id is not None:

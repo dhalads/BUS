@@ -27,10 +27,12 @@ import json, logging.config
 
 class ProcessImage(object):
 
+    segList = None
+
     # def show_images(images: List[numpy.ndarray]) -> None:
     def show_images(self, images):
         n: int = len(images)
-        f = plt.figure(figsize=(16,20))
+        f = plt.figure(figsize=(16,20), dpi=80)
         for i in range(n):
             # Debug, plot figure
             # f.add_subplot(1, n, i + 1)
@@ -38,6 +40,18 @@ class ProcessImage(object):
             ax.title.set_text(images[i][0])
             plt.imshow(images[i][1], cmap="gray")
 
+        plt.show(block=True)
+
+    def plot5(self, seg):
+        keys = list(seg.images.keys())
+        n: int = len(keys)
+        f = plt.figure(figsize=(10,10))
+        for i in range(n):
+            # Debug, plot figure
+            # f.add_subplot(1, n, i + 1)
+            ax = f.add_subplot(2, 3, i + 1)
+            ax.title.set_text(keys[i])
+            plt.imshow(seg.images.get(keys[i]).get('image'))
         plt.show(block=True)
 
     def plot4(self, seg):
@@ -96,12 +110,28 @@ class ProcessImage(object):
         seg.createCannyEdgedImage()
         self.plot4(seg)
 
-    def runSaveGTStats(self):
+    def display7(self, ids):
+        # ids = (294,)
+        # ids = np.arange(1,148)
+        segList = BUSSegmentorList()
+        segList.loadDataSetB(ids)
+        size = len(segList.BUSList)
+        seg = segList.BUSList[size -1]
+        seg.findContours()
+        self.plot5(seg)
+
+    def runSaveGTStats(self, ids):
         segList = BUSSegmentorList()
         segList.loadDataSetB(ids)
         size = len(segList.BUSList)
         print(f"segList size={size}")
         segList.saveGTStats()
+
+    def load(self, ids):
+        self.segList = BUSSegmentorList()
+        self.segList.loadDataSetB(ids)
+        size = len(self.segList.BUSList)
+        print(f"segList size={size}")
 
 
 def main():
@@ -110,7 +140,10 @@ def main():
         config = json.load(f)
         logging.config.dictConfig(config)
     pimg = ProcessImage()
-    pimg.display6((49,))
+    # pimg.display7((80,)) #80, 101, 125
+    # pimg.runSaveGTStats(np.arange(1, 144))
+    pimg.load(np.arange(1,144))
+    pimg.segList.saveROIStats()
 
 main()
 

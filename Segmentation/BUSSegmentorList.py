@@ -36,6 +36,7 @@ class BUSSegmentorList(object):
             for id in ids:
                 try:
                     seg = BUSSegmentor()
+                    seg.id = id
                     name = str(id).zfill(6) +".png"
                     seg.loadImage(name)
                     seg.loadImageGT()
@@ -80,6 +81,28 @@ class BUSSegmentorList(object):
                     self.logger.debug('Did not have GT contour name=%s', seg.imageName)
             df = pd.DataFrame(output)
             df.to_csv('statsGT.csv')
+        except Exception as e:
+            pass
+            # self.logger.error(e)
+            self.logger.exception(e)
+            raise
+
+    def saveROIStats(self):
+        output = []
+        try:
+            pass
+            for seg in self.BUSList:
+                cnt, stats = seg.findContours()
+                if cnt is not None :
+                    output.append(stats)
+                else:
+                    self.logger.debug('Did not find contour name=%s', seg.imageName)
+                    stats = {}
+                    stats['id'] = seg.id
+                    stats['imageName'] = seg.imageName
+                    output.append(stats)
+            df = pd.DataFrame(output)
+            df[df.columns.difference(["cnt"])].to_csv('statsROI.csv')
         except Exception as e:
             pass
             # self.logger.error(e)
