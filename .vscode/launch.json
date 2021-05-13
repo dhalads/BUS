@@ -15,7 +15,7 @@
       "name": "ProcesImage",
       "type": "python",
       "request": "launch",
-      "program": "Segmentation/ProcessImage.py",
+      "program": "Segmentation/Main.py",
       "console": "integratedTerminal"
     }
   ]

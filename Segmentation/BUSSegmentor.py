@@ -56,8 +56,12 @@ class BUSSegmentor(object):
         self.imageName = filename
         path = Common.getImagePath()
         path = path / "original" / filename
-        image = Image.open(path).convert('L') # Make sure to convert to grayscale
-        # image = Image.open(path)
+        try:
+            image = Image.open(path).convert('L') # Make sure to convert to grayscale
+        except FileNotFoundError:
+            filename = str(self.id) + ".png"
+            path = Common.getImagePath() / "original" / filename
+            image = Image.open(path).convert('L')
         self.PILimage= image
         image_inv = ImageOps.invert(image)
         bus = asarray(image_inv)

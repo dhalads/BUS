@@ -111,13 +111,10 @@ class ProcessImage(object):
         self.plot4(seg)
 
     def display7(self, ids):
-        # ids = (294,)
-        # ids = np.arange(1,148)
-        segList = BUSSegmentorList()
-        segList.loadDataSetB(ids)
-        size = len(segList.BUSList)
-        seg = segList.BUSList[size -1]
-        seg.findContours()
+        self.load(ids)
+        size = len(self.segList.BUSList)
+        seg = self.segList.BUSList[size -1]
+        seg.findContours(addImages=True)
         self.plot5(seg)
 
     def runSaveGTStats(self, ids):
@@ -134,18 +131,25 @@ class ProcessImage(object):
         print(f"segList size={size}")
 
 
-def main():
-    # https://coralogix.com/log-analytics-blog/python-logging-best-practices-tips/
-    with open('logging-config.json', 'rt') as f:
-        config = json.load(f)
-        logging.config.dictConfig(config)
-    pimg = ProcessImage()
-    # pimg.display7((80,)) #80, 101, 125
-    # pimg.runSaveGTStats(np.arange(1, 144))
-    pimg.load(np.arange(1,144))
-    pimg.segList.saveROIStats()
+    def main(self):
+        import os
+        import sys
+        localPath = "c:\\Users\\djhalama\\Documents\\GitHub\\BUS"
+        if os.path.exists(localPath):
+            # print(f"localPath exists: {localPath}")
+            os.chdir("c:\\Users\\djhalama\\Documents\\GitHub\\BUS")
+        else:
+            from google.colab import drive
+            drive.mount('/content/gdrive')
+            os.chdir('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS')
+            sys.path.append('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS/Segmentation')
+            from Common import Common
+        # https://coralogix.com/log-analytics-blog/python-logging-best-practices-tips/
+        with open('logging-config.json', 'rt') as f:
+            config = json.load(f)
+            logging.config.dictConfig(config)
 
-main()
+
 
 
 
