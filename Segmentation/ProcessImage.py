@@ -143,7 +143,7 @@ class ProcessImage(object):
             drive.mount('/content/gdrive')
             os.chdir('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS')
             sys.path.append('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS/Segmentation')
-            from Common import Common
+        from Common import Common
         # https://coralogix.com/log-analytics-blog/python-logging-best-practices-tips/
         with open('logging-config.json', 'rt') as f:
             config = json.load(f)

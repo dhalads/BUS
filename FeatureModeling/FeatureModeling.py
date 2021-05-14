@@ -1,7 +1,7 @@
 # computational imports
 import numpy as np
 import pandas as pd
-# from ast import literal_eval
+from ast import literal_eval
 # from sklearn.feature_extraction.text import CountVectorizer
 # from sklearn.metrics.pairwise import cosine_similarity
 # from sklearn.feature_extraction.text import TfidfVectorizer
@@ -21,7 +21,7 @@ from IPython.core.display import HTML
 response = urllib.request.urlopen('https://raw.githubusercontent.com/DataScienceUWL/DS775v2/master/ds755.css')
 HTML(response.read().decode("utf-8"));
 import os
-import pycaret
+# import pycaret
 
 # # check version
 # from pycaret.utils import version
@@ -63,14 +63,14 @@ print(df.isna().sum())
 # df = df.dropna()
 
 print(f"The shape is {df.shape}")
-df = df.drop(columns=["Peripheral ZoneACR", "Size", "Quality", "Lesion Type"])
-index = df[df['Sample name'] == "PA3"].index
-index =[idx for idx, row in df.iterrows() if len(row['Sample name'].split(" ")) > 1]
-df.drop(index, inplace=True)
-df = df.dropna()
-df = df.assign(ID = lambda x: stripID(x['Sample name']))
-df["ID"] = pd.to_numeric(df["ID"])
-df = df.drop(columns=["Sample name", "ID"])
+# df = df.drop(columns=["Peripheral ZoneACR", "Size", "Quality", "Lesion Type"])
+# index = df[df['Sample name'] == "PA3"].index
+# index =[idx for idx, row in df.iterrows() if len(row['Sample name'].split(" ")) > 1]
+# df.drop(index, inplace=True)
+# df = df.dropna()
+df = df.assign(id = lambda x: stripID(x['Sample name']))
+df["id"] = pd.to_numeric(df["id"])
+# df = df.drop(columns=["Sample name", "id"])
 df['Biopsy'] = df['BI-RADS'].apply(lambda x: 'No' if x in ['1', '2', '3'] else 'Yes')
 print(df.info())
 display(missing_values_table(df))
@@ -79,37 +79,39 @@ print(f"The shape is {df.shape}")
 print(df.describe())
 display(df)
 
+df.to_csv('dataScored.csv')
+
 # https://stackoverflow.com/questions/65012601/attributeerror-simpleimputer-object-has-no-attribute-validate-data-in-pyca
 # https://github.com/pycaret/pycaret/issues/1107
 
-from pycaret.classification import *
-# clf1 = setup(df, target = 'BI-RADS', imputation_type='iterative', session_id=123, log_experiment=True, experiment_name='exp1',fix_imbalance=True,
-#  ignore_features=["Histology"], feature_selection=True)
+# from pycaret.classification import *
+# # clf1 = setup(df, target = 'BI-RADS', imputation_type='iterative', session_id=123, log_experiment=True, experiment_name='exp1',fix_imbalance=True,
+# #  ignore_features=["Histology"], feature_selection=True)
 
-clf1 = setup(df, target = 'Biopsy', imputation_type='iterative', session_id=123, log_experiment=False, experiment_name='exp1',fix_imbalance=True,
- ignore_features=["BI-RADS", 'Histology'], html=False, silent=True)
+# clf1 = setup(df, target = 'Biopsy', imputation_type='iterative', session_id=123, log_experiment=False, experiment_name='exp1',fix_imbalance=True,
+#  ignore_features=["BI-RADS", 'Histology'], html=False, silent=True)
 
-best_model = compare_models(include=['knn', 'lr'])
+# best_model = compare_models(include=['knn', 'lr'])
 
-display(best_model)
+# display(best_model)
 
 
-def on_close(event):
-    print('Closed Figure!')
+# def on_close(event):
+#     print('Closed Figure!')
 
-model = create_model('lr')
+# model = create_model('lr')
 
-tuned_model = tune_model(model)
-f = plt.figure(figsize=(12,16))
-f.add_subplot(3, 1, 1)
-# f.canvas.mpl_connect('close_event', on_close)
-#  https://pycaret.org/plot-model/
-plot_model(tuned_model, plot='auc')
-f.add_subplot(2, 1, 2)
-plot_model(tuned_model, plot='feature')
-plot_model(tuned_model, plot='confusion_matrix')
-plot_model(tuned_model, plot='threshold')
+# tuned_model = tune_model(model)
+# f = plt.figure(figsize=(12,16))
+# f.add_subplot(3, 1, 1)
+# # f.canvas.mpl_connect('close_event', on_close)
+# #  https://pycaret.org/plot-model/
+# plot_model(tuned_model, plot='auc')
+# f.add_subplot(2, 1, 2)
+# plot_model(tuned_model, plot='feature')
+# plot_model(tuned_model, plot='confusion_matrix')
+# plot_model(tuned_model, plot='threshold')
 
-#  ,display_format="streamlit"
-# grid.arrange(plt1, plt2)
-# plot_grid(c(plt1, plt2))
+# #  ,display_format="streamlit"
+# # grid.arrange(plt1, plt2)
+# # plot_grid(c(plt1, plt2))
