@@ -24,9 +24,15 @@ from IPython.display import display, IFrame
 from IPython.core.display import HTML
 import logging
 import json, logging.config
+from ipywidgets import widgets, interactive
+
+from io import StringIO
+import io
+import cv2
 
 class ProcessImage(object):
 
+    logger = logging.getLogger("BUS." + __name__)
     segList = None
 
     # def show_images(images: List[numpy.ndarray]) -> None:
@@ -124,11 +130,7 @@ class ProcessImage(object):
         print(f"segList size={size}")
         segList.saveGTStats()
 
-    def load(self, ids):
-        self.segList = BUSSegmentorList()
-        self.segList.loadDataSetB(ids)
-        size = len(self.segList.BUSList)
-        print(f"segList size={size}")
+
 
 
     def main(self):
@@ -148,6 +150,303 @@ class ProcessImage(object):
         with open('logging-config.json', 'rt') as f:
             config = json.load(f)
             logging.config.dictConfig(config)
+
+class busUI(object):
+
+    logger = logging.getLogger("BUS." + __name__)
+    segList = None
+
+    def load(self, ids):
+        self.segList = BUSSegmentorList()
+        self.segList.loadDataSetB(ids)
+        size = len(self.segList.BUSList)
+        print(f"segList size={size}")
+
+
+    def initUI2(self):
+        self.load((7,))
+        seg = self.segList.BUSList[0]
+        seg.findContours(addImages=True)
+        singleUIObj = singleUI()
+        singleUIObj.setSeg(seg)
+        singleUIObj.setControlBox()
+        tmp = []
+        tmp.append(singleUIObj.getOutput())
+        singleVBox = widgets.VBox(tmp)
+        display(singleVBox)
+
+    def initUI(self):
+        singleUIObj = singleUI()
+        singleUIObj.parent = self
+        singleUIObj.initUI()
+        tmp = []
+        tmp.append(singleUIObj.getOutput())
+        singleVBox = widgets.VBox(tmp)
+        display(singleVBox)
+
+        singleUIObj.initObserve()
+
+
+class singleUI(object):
+
+    logger = logging.getLogger("BUS." + __name__)
+    parent = None
+    baseW = None
+    seg = None
+    segList = None
+    idWList = None
+    buttonLoad = None
+    select_id = None
+    imageWidth = None
+    imageSelect = None
+    imageWDisplay = None
+
+    def setSegList(self, seglist):
+        self.segList = seglist
+        # id = seg.id
+    
+    def setSeg(self, segment):
+        self.seg = segment
+        # id = seg.id
+    
+    def initUI(self):
+        if self.seg is not None:
+            id = self.seg.id
+        else:
+            id = 0
+        
+        self.idWList = widgets.Text(
+            value="",
+            placeholder='',
+            description='Enter id list:',
+            disabled=False
+        )
+        
+        self.buttonLoad = widgets.Button(
+            description='Load',
+            disabled=False,
+            button_style='', # 'success', 'info', 'warning', 'danger' or ''
+            tooltip='Click me',
+            icon='check' # (FontAwesome names without the `fa-` prefix)
+        )
+        
+        self.select_id = widgets.Dropdown(
+            options=['None'],
+            value='None',
+            description='Number:',
+            disabled=False,
+        )
+        
+        self.buttonPrev = widgets.Button(
+            description='< Prev',
+            disabled=False,
+            button_style='', # 'success', 'info', 'warning', 'danger' or ''
+            tooltip='Click me',
+            icon='check' # (FontAwesome names without the `fa-` prefix)
+        )
+        
+        self.buttonNext = widgets.Button(
+            description='> Next',
+            disabled=False,
+            button_style='', # 'success', 'info', 'warning', 'danger' or ''
+            tooltip='Click me',
+            icon='check' # (FontAwesome names without the `fa-` prefix)
+        )
+        
+        widthOpts = [300,400,500,600,700,800, 1600, 2400]
+        self.imageWidth = widgets.Dropdown(
+            options=widthOpts,
+            value=widthOpts[0],
+            description='Image width:',
+            disabled=False
+        )
+        if self.seg is not None :
+            opts = list(self.seg.images.keys())
+        else:
+            opts = ["None"]
+        self.imageSelect = widgets.SelectMultiple(
+            options=opts,
+            value=opts,
+            description='Images:',
+            disabled=False,
+        )
+
+    def initImageBoxes(self):
+        imagesH = None
+        imagesWList = []
+
+        try:
+
+            if self.seg is not None :
+                opts = list(self.seg.images.keys())
+                self.logger.debug("id=%s", self.seg.id)
+            else:
+                opts = []
+            for opt in opts:
+                titleW = widgets.Label(value=opt)
+                freezeW = widgets.Checkbox(
+                            value=False,
+                            description='Freeze',
+                            disabled=False,
+                            indent=False
+                        )
+                imageBytes = self.getImageBytes(self.seg.images.get(opt).get('image'))
+                imageW = widgets.Image(
+                    value=imageBytes,
+                    format='png',
+                    width=self.imageWidth.value
+                )
+                imageVBox = widgets.VBox([titleW, freezeW, imageW])
+                imagesWList.append(imageVBox)
+            box_layout = widgets.Layout(overflow='scroll hidden',
+                    border='3px solid green',
+                    width='100%',
+                    height='',
+                    flex_flow='row',
+                    display='flex')
+            self.logger.debug("imagesWList=%s", imagesWList)
+            if self.imageWDisplay is not None:
+                self.imageWDisplay.children = imagesWList
+            else:
+                self.imageWDisplay = widgets.HBox(imagesWList, layout=box_layout)
+            return( self.imageWDisplay)
+
+        except:
+            self.logger.exception("")
+            self.exception(self.seg)
+            raise
+
+    def getImageBytes(self, img, addGrids=False):
+        try:
+            if addGrids :
+                import matplotlib.pyplot as plt
+                from io import BytesIO
+                fig, ax = plt.subplots()
+                # ax.title.set_text(key)
+                plt.imshow(img, cmap="gray")
+                figdata = BytesIO()
+                fig.savefig(figdata, format='png')
+                output = figdata.getvalue()
+            else:
+                is_success, im_buf_arr = cv2.imencode(".png", img)
+                byte_im = im_buf_arr.tobytes()
+                output = byte_im
+            return output
+        except:
+            self.logger.excpetion("")
+            self.exception(self.seg)
+            raise
+
+    def initObserve(self):
+        # self.imageSelect.observe(self.on_imageSelect_chan ge, names='value')
+        # imageWidth.observe(on_width_change, names='value')
+        self.buttonLoad.on_click(self.on_load_clicked)
+        self.buttonPrev.on_click(self.on_prev_clicked)
+        self.buttonNext.on_click(self.on_next_clicked)
+        self.select_id.observe(self.on_select_id_change, names='value')
+
+    def on_load_clicked(self, b):
+        self.logger.debug(b)
+        listString = self.idWList.value
+        result = self.valid_id_string(listString)
+        self.logger.debug(result)
+        if result[0] :
+            self.select_id.options = result[2]
+            self.select_id.value = result[2][0]
+
+    def on_next_clicked(self, b):
+        self.logger.debug(b)
+        options = self.select_id.options
+        size = len(options)
+        idxList = [i for i, value in enumerate(self.select_id.options) if value == self.select_id.value]
+        idx = idxList[0]
+        idx = idx + 1
+        if idx == size :
+            idx = 0
+        self.select_id.value = options[idx]
+
+    def on_prev_clicked(self, b):
+        self.logger.debug(b)
+        options = self.select_id.options
+        size = len(options)
+        idxList = [i for i, value in enumerate(self.select_id.options) if value == self.select_id.value]
+        idx = idxList[0]
+        idx = idx - 1
+        if idx == -1 :
+            idx = size - 1
+        self.select_id.value = options[idx]
+
+    def on_select_id_change(self, change):
+        self.logger.debug(change)
+        new_value = change['new']
+        self.logger.debug("new_value=%s", new_value)
+        ids = (int(new_value),)
+        self.load(ids)
+        if self.seg is not None :
+            opts = list(self.seg.images.keys())
+        else:
+            opts = ["None"]
+        self.logger.debug("opts=%s", opts)
+        self.imageSelect.options = opts
+        self.imageSelect.value = opts
+        self.initImageBoxes()
+
+    def on_imageSelect_change(self, change):
+        self.logger.debug(change)
+        new_value = change['new']
+        self.logger.debug("new_value=%s", new_value)
+        # ids = (int(new_value),)
+        # self.load(ids)
+        # if self.seg is not None :
+        #     opts = list(self.seg.images.keys())
+        # else:
+        #     opts = ["None"]
+        # self.logger.debug(opts)
+        # self.imageSelect.options = opts
+        # self.imageSelect.value = opts
+
+
+
+    def load(self, ids):
+        if self.segList is not None:
+            self.logger.debug("id()=%s", id(self.segList))
+        self.segList = BUSSegmentorList()
+        self.logger.debug("id()=%s", id(self.segList))
+        self.segList.loadDataSetB(ids)
+        size = len(self.segList.BUSList)
+        self.logger.debug(f"segList size={size}")
+        self.seg = self.segList.BUSList[size-1]
+        self.seg.findContours(addImages=True)
+
+    def valid_id_string(self, idString):
+        message = ""
+        idList = []
+        success = True
+        try:
+            rangeList = idString.split(",")
+            for rg in rangeList:
+                if '-' in rg:
+                    range2 = rg.split('-')
+                    start = int(range2[0])
+                    end = int(range2[1]) + 1
+                    idList.extend(range(start, end))
+                else:
+                    idList.append(int(rg))
+        except:
+            success = False
+        return((success, message,  idList))
+
+    def getOutput(self):
+        box_layout = widgets.Layout(overflow='scroll hidden',
+                    border='3px solid black',
+                    width='100%',
+                    height='',
+                    flex_flow='row',
+                    display='flex')
+        controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.imageWidth, self.imageSelect], layout=box_layout)
+        output = widgets.VBox([controlW, self.initImageBoxes()])
+        self.baseW = output
+        return(output)
 
 
 

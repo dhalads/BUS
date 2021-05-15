@@ -26,13 +26,16 @@ class BUSSegmentorList(object):
     BUSList = []
     isError = False
     errorMessages =  []
+    idString = None
+    idList = None
 
     def __init__(self):
-        pass
+        self.logger.debug("in init")
 
     def loadDataSetB(self, ids):
         countFileNotFound = 0
         try:
+            isList = ids
             for id in ids:
                 try:
                     seg = BUSSegmentor()
@@ -108,3 +111,21 @@ class BUSSegmentorList(object):
             # self.logger.error(e)
             self.logger.exception(e)
             raise
+
+    def valid_id_string(self, idString):
+        message = ""
+        idList = []
+        success = True
+        try:
+            rangeList = idString.split(",")
+            for rg in rangeList:
+                if '-' in rg:
+                    range2 = rg.split('-')
+                    start = int(range2[0])
+                    end = int(range2[1]) + 1
+                    idList.extend(range(start, end))
+                else:
+                    idList.append(int(rg))
+        except:
+            success = False
+        return((success, message,  idList))
