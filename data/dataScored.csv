@@ -1,0 +1,164 @@
+,Sample name,Peripheral ZoneACR,Peripheral ZoneTS,Marginal ZoneACR,Boundary ZoneACR,MarginalBoundary ZoneTS,ShapeACR ,ShapeTS,Orientation,Echo PatternACR,Echo PatternTS,Posterior FeaturesACR,Posterior FeaturesTS,VascularityACR,Size,Histology,Lesion Type,BI-RADS,Quality,id,Biopsy
+0,PA1,,Normal tissue,Not circumscribed,Abrupt interface,Partial circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,,2,2.0,1,No
+1,PA2,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,1.0,2,No
+2,PA3,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Round ,Round,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,"Mixed, mostly enhanced & partially shadowing",Absent,0.0,Benign,Cyst,2,2.0,3,No
+3,PA4,,Normal tissue,Circumscribed ,Abrupt interface,Partial circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,3.0,4,No
+4,PA5,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Round ,Round,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,"Mixed, mostly enhanced & partially shadowing",Absent,0.0,Benign,Cyst,2,2.0,5,No
+5,PA6,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,6,No
+6,PA7,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Old Cyst,3,2.0,7,No
+7,PA8,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hyperechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Old Cyst vs FA,3,2.0,8,No
+8,PA9,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,9,No
+9,PA10,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,10,No
+10,PA11 Bad Case,,,,,,,,,,,,,,,Benign,,,,11,Yes
+11,PA12,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,"Mixed, partially enhanced & mostly shadowing",Absent,0.0,Benign,Cyst,2,2.0,12,No
+12,PA13 2 Lesions,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,,Anechoic,Severe/Marked hypoechoic,Enhancement,"Mixed, mostly enhanced & partially shadowing",Absent,0.0,Benign,Cyst,2,2.0,13,No
+13,PA14,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Heterogeneous,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Old Cyst or FA,3,2.0,14,No
+14,PA15,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,15,No
+15,PA16,,Normal tissue,Microlobulated,Abrupt interface,Short hyper or hypo echogenic spicuales,Round ,Round,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Malignant,Low Susp,4a,2.0,16,Yes
+16,PA17,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,17,No
+17,PA18,,Thin spiculations,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Combined pattern,"Mixed, normal & shadowing",Absent,0.0,Malignant,Cancer,5,2.0,18,Yes
+18,PA19,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,19,No
+19,PA20,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,3,2.0,20,No
+20,PA21,,Normal tissue,Circumscribed ,Echogenic halo,Thick echogenic rim,Oval,Round,Not parellel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Likely Cyst,3,2.0,21,No
+21,PA22,,Normal tissue,Indistinct,Abrupt interface,Indistinct ,Irregular,Irregular w/ angles,Not parellel,Complex cystic/solid,Complex cystic/solid,Enhancement,Enhancement,Absent,0.0,Benign,Intracystic Mass,4b,2.0,22,Yes
+22,PA23,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,1.0,23,No
+23,PA24,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,3,1.0,24,No
+24,PA25,,Normal tissue,Angular,Echogenic halo,Partial circumscribed,Irregular,Irregular w/o angles & parallel ,,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Benign,Irregular Mass,4b,2.0,25,Yes
+25,PA26,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Likely FA,3,1.0,26,No
+26,PA27,Architectural distortion,Shadowing,Indistinct,Echogenic halo,Indistinct ,Oval,Plump oval,Not parellel,Hyperechoic,Mild hypoechoic,Shadowing,"Mixed, normal & shadowing",Absent,0.0,Malignant,Cancer,4c,3.0,27,Yes
+27,PA28 Bad Image,Architectural distortion,,Microlobulated,,Indistinct ,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Bad Image,0,3.0,28,Yes
+28,PA29,Architectural distortion,Thick spiculations,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/ angles,Not parellel,Hypoechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,29,Yes
+29,PA30,Architectural distortion,Thick spiculations,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/ angles,Not parellel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Malignant,Cancer,5,2.0,30,Yes
+30,PA31,Architectural distortion,Thick spiculations,Indistinct,,Indistinct ,Irregular,Irregular w/ angles,Not parellel,Hyperechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Malignant,Cancer,4b,2.0,31,Yes
+31,PA32,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,1.0,32,No
+32,PA33,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,33,No
+33,PA34 Bad Image,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Not parellel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,3.0,34,No
+34,PA35,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,35,No
+35,PA36 Bad Image,,,,,,,,,,,,,,,Benign,,,3.0,36,Yes
+36,PA37,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,37,No
+37,PA38,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Old Cyst vs FA,3,2.0,38,No
+38,PA39,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,3,2.0,39,No
+39,PA40,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,1.0,40,No
+40,PA41,,Normal tissue,Microlobulated,Echogenic halo,Partial circumscribed,Oval,Flat oval ,Parallel,Complex cystic/solid,Complex cystic/solid,Enhancement,Enhancement,Absent,0.0,Benign,Complicated Cystic Solid,4a,2.0,41,Yes
+41,PA42,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,1.0,42,No
+42,PA43,,Normal tissue,Indistinct,,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,43,Yes
+43,PA44,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,4a,2.0,44,Yes
+44,PA45,,Normal tissue,Circumscribed ,Abrupt interface,Partial circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Indeterminate,4a,2.0,45,Yes
+45,PA46,Architectural distortion,Thin spiculations,Indistinct,Echogenic halo,Indistinct ,Round ,Round,Not parellel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Malignant,Cancer,4b,1.0,46,Yes
+46,PA47,,Normal tissue,Microlobulated,Abrupt interface,Partial circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Indeterminate,4a,2.0,47,Yes
+47,PA48 Bad Case,,Normal tissue,Circumscribed ,Abrupt interface,Partial circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,4a,3.0,48,Yes
+48,PA49,Architectural distortion,,Indistinct,Echogenic halo,Indistinct ,Oval,Plump oval,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,1.0,49,Yes
+49,PA50,,Normal tissue,Microlobulated,Abrupt interface,Partial circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Combined pattern,"Mixed, mostly enhanced & partially shadowing",Absent,0.0,Benign,Indeterminate,4a,2.0,50,Yes
+50,PA51,,Normal tissue,Circumscribed ,Echogenic halo,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Possible FA,3,2.0,51,No
+51,PA52,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,3,2.0,52,No
+52,PA53,,Normal tissue,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Heterogeneous,Hetergeneous w/o calcs,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,4b,2.0,53,Yes
+53,PA54,,Normal tissue,Microlobulated,,Indistinct ,Round ,Round,Not parellel,Heterogeneous,Hetergeneous w/o calcs,No features,No features,Absent,0.0,Malignant,Cancer,4b,2.0,54,Yes
+54,PA55,Architectural distortion,Thick spiculations,Indistinct,,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,1.0,55,Yes
+55,PA56,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,3,2.0,56,No
+56,PA57,Architectural distortion,Thick spiculations,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,4c,1.0,57,Yes
+57,PA58,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,58,No
+58,PA59,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,59,No
+59,PA60 Normal ,,Normal tissue,,,,,,,,,,,Absent,0.0,Benign,Normal,1,2.0,60,No
+60,PA61,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,61,No
+61,PA62,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,62,No
+62,PA63,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,63,No
+63,PA64,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,64,No
+64,PA65,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,65,No
+65,PA66,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,66,No
+66,PA67,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Skin Cyst,2,2.0,67,No
+67,PA68,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,68,No
+68,PA69,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Likely Cyst,3,2.0,69,No
+69,PA70,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,70,No
+70,PA71,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,71,No
+71,PA72,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,72,No
+72,PA73,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Likely Cyst,3,2.0,73,No
+73,PA74,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Likely Cyst,3,2.0,74,No
+74,PA75 Bad Image,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Likely Cyst,3,2.0,75,No
+75,PA76,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Likely Cyst,3,2.0,76,No
+76,PA77,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,3,3.0,77,No
+77,PA78,,Normal tissue,Indistinct,,Partial circumscribed,Irregular,Irregular w/o angles & parallel ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,4a,2.0,78,Yes
+78,PA79,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Indeterminate,4a,2.0,79,Yes
+79,PA80,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,3,2.0,80,No
+80,PA81 Breast Implant,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,3,2.0,81,No
+81,PA82 Bad Image,,,,,,,Plump oval,Parallel,Hypoechoic,,,,,0.0,Benign,Bad Image,,,82,Yes
+82,PA83,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,3,2.0,83,No
+83,PA84,Architectural distortion,Shadowing,,Echogenic halo,Partial circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Benign,Cancer,4a,3.0,84,Yes
+84,PA85,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,3,2.0,85,No
+85,PA86,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst vs FA,3,2.0,86,No
+86,PA87,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs Fat Lobule,2,2.0,87,No
+87,PA88 Bresat Implant,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,2,2.0,88,No
+88,PA89,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst vs FA,2,2.0,89,No
+89,PA90 Normal ,,Normal tissue,,,,,,,,,,,Absent,0.0,Benign,Normal,2,2.0,90,No
+90,PA91,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,2,2.0,91,No
+91,PA92,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,92,No
+92,PA93,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,3,2.0,93,No
+93,PA94,,,Microlobulated,,Indistinct ,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cancer,4a,2.0,94,Yes
+94,PA95,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,FA vs Cyst,2,2.0,95,No
+95,PA96,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst vs FA,2,2.0,96,No
+96,PA97,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,2,2.0,97,No
+97,PA98,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Round ,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,98,No
+98,PA99 Breast Implant,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,FA vs Cyst,2,2.0,99,No
+99,PA100 Cysts,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cysts,2,1.0,100,No
+100,PA101 Bad Image,,Normal tissue,Indistinct,,Indistinct ,Oval,Round,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,3.0,101,No
+101,PA102,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,2,2.0,102,No
+102,PA103,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Round ,Round,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,103,No
+103,PA104,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,104,No
+104,PA105,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,105,No
+105,PA106,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst vs FA,2,2.0,106,No
+106,PA107,,Normal tissue,,,,,,,,,,,Absent,0.0,Benign,Normal,1,2.0,107,No
+107,PA108 Bad Image,,,,,,,,,,,,,Absent,0.0,Benign,Bad Image,,,108,Yes
+108,PA109,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,109,No
+109,PA110,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,110,No
+110,PA111 Bad Case,,,,,,,,,,,,,Absent,0.0,Benign,Bad Case,,,111,Yes
+111,PA112,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Inflamed Cyst,2,2.0,112,No
+112,PA113,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,113,No
+113,PA114,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,114,No
+114,PA115,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,115,No
+115,PA116,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,116,No
+116,PA117,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,117,No
+117,PA118,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,118,No
+118,PA119,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,119,No
+119,PA120,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,120,No
+120,PA121,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,121,No
+121,PA122,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,122,No
+122,PA123 Two Small Cysts,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,123,No
+123,PA124,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Round ,Round,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,124,No
+124,PA125,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Round ,Round,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,125,No
+125,PA126,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,126,No
+126,PA127,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,127,No
+127,PA128,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,128,No
+128,PA129,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,129,No
+129,PA130,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,130,No
+130,PA131,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Not parellel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,131,No
+131,PA132,Architectural distortion,Shadowing,Indistinct,,Indistinct ,Irregular,Irregular w/o angles & parallel ,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,132,Yes
+132,PA133,,,Microlobulated,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & parallel ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Malignant,Cancer,4b,2.0,133,Yes
+133,PA134,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,2.0,134,No
+134,PA135 Bad Image,,,,,,,,,,,,,Absent,0.0,Benign,Bad Image,,,135,Yes
+135,PA136,,Thin spiculations,Angular,Echogenic halo,Indistinct ,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer ,4b,2.0,136,Yes
+136,PA137,,Normal tissue,,,,,,,,,,,Absent,0.0,Benign,Normal,1,2.0,137,No
+137,PA138 Bad Image,,,,,,,,,,,,,Absent,0.0,Benign,Bad Image,,,138,Yes
+138,PA139 Two Small Cysts,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Plump oval,Parallel,Anechoic,Severe/Marked hypoechoic,No features,No features,Absent,0.0,Benign,Cysts,2,2.0,139,No
+139,PA140,Architectural distortion,Thin spiculations,Microlobulated,Echogenic halo,Indistinct ,Oval,Plump oval,Not parellel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,4c,2.0,140,Yes
+140,PA141,Architectural distortion,Thick spiculations,Angular,,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,141,Yes
+141,PA142,Architectural distortion,Thin spiculations,Angular,,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,142,Yes
+142,PA143,Architectural distortion,Thick spiculations,Angular,,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,143,Yes
+143,PA144,Architectural distortion,Thin spiculations,Angular,,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,144,Yes
+144,PA145,Architectural distortion,Thin spiculations,Angular,,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,145,Yes
+145,PA146 Normal,,,,,,,,,,,,,Absent,0.0,Benign,Normal,1,2.0,146,No
+146,PA147 ,,Normal tissue,Microlobulated,Echogenic halo,Partial circumscribed,Round ,Round,,Hypoechoic,Mild hypoechoic,,No features,Absent,0.0,Malignant,Cancer,4c,2.0,147,Yes
+147,PA295,Architectural distortion,,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,295,Yes
+148,PA296,,Thin spiculations,Indistinct,,Indistinct ,Irregular,Irregular w/o angles & parallel ,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer ,4b,2.0,296,Yes
+149,PA297,Architectural distortion,Thick spiculations,Angular,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,297,Yes
+150,PA298,Architectural distortion,Thin spiculations,Indistinct,,Indistinct ,Irregular,Irregular w/o angles & parallel ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Malignant,Cancer,5,2.0,298,Yes
+151,PA299,Architectural distortion,Thin spiculations,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,299,Yes
+152,PA300,,,Angular,,Indistinct ,Irregular,Irregular w/o angles & parallel ,Parallel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,4b,2.0,300,Yes
+153,PA301,,Shadowing,Indistinct,,Indistinct ,Irregular,Irregular w/o angles & parallel ,Parallel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,4b,2.0,301,Yes
+154,PA302,,Normal tissue,Microlobulated,Echogenic halo,Well circ w/ uniform thick iso or hyperechoic capsule ,Irregular,Irregular w/o angles & parallel ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Malignant,Cancer,5,2.0,302,Yes
+155,PA303 Bad Image,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Anechoic,Severe/Marked hypoechoic,Enhancement,Enhancement,Absent,0.0,Benign,Cyst,2,3.0,303,No
+156,PA304,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,304,No
+157,PA305,,Normal tissue,Microlobulated,,Partial circumscribed,Oval,Plump oval,Parallel,Complex cystic/solid,Complex cystic/solid,Enhancement,Enhancement,Absent,0.0,Malignant,Indeterminate,4a,2.0,305,Yes
+158,PA306,Architectural distortion,,Angular,Echogenic halo,Indistinct ,Irregular,Irregular w/ angles,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,306,Yes
+159,PA307,,Normal tissue,Circumscribed ,Abrupt interface,Well circumscribed,Oval,Flat oval ,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Benign,Cyst,2,2.0,307,No
+160,PA308,Architectural distortion,Thick spiculations,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Anechoic,Severe/Marked hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,5,2.0,308,Yes
+161,PA309,,,Indistinct,Echogenic halo,Indistinct ,Irregular,Irregular w/o angles & not parallel,Not parellel,Hypoechoic,Mild hypoechoic,Shadowing,Shadowing,Absent,0.0,Malignant,Cancer,4c,2.0,309,Yes
+162,PA310,,Normal tissue,Microlobulated,Abrupt interface,Indistinct ,Oval,Plump oval,Parallel,Hypoechoic,Mild hypoechoic,No features,No features,Absent,0.0,Malignant,Cancer,4b,2.0,310,Yes

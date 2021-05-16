@@ -1,22 +1,6 @@
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
 # %%
-# import os
-# import sys
-# localPath = "c:\\Users\\djhalama\\Documents\\GitHub\\BUS"
-# if os.path.exists(localPath):
-#     # print(f"localPath exists: {localPath}")
-#     os.chdir("c:\\Users\\djhalama\\Documents\\GitHub\\BUS")
-# else:
-#     from google.colab import drive
-#     drive.mount('/content/gdrive')
-#     os.chdir('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS')
-#     sys.path.append('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS/Segmentation')
-#     from Common import Common
-#     # print(Common.getImagePath())
-
-# print(sys.path)
-# print(os.getcwd())
 
 from IPython.core.display import display, HTML
 display(HTML("<style>.container { width:100% !important; }</style>"))

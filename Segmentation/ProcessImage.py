@@ -25,10 +25,12 @@ from IPython.core.display import HTML
 import logging
 import json, logging.config
 from ipywidgets import widgets, interactive
-
+import pandas as pd
 from io import StringIO
 import io
 import cv2
+import qgrid
+
 
 class ProcessImage(object):
 
@@ -200,6 +202,8 @@ class singleUI(object):
     imageWidth = None
     imageSelect = None
     imageWDisplay = None
+    buttonApplyImgSelect = None
+    qgrid1 = None
 
     def setSegList(self, seglist):
         self.segList = seglist
@@ -216,7 +220,7 @@ class singleUI(object):
             id = 0
         
         self.idWList = widgets.Text(
-            value="",
+            value="4-6",
             placeholder='',
             description='Enter id list:',
             disabled=False
@@ -271,6 +275,16 @@ class singleUI(object):
             disabled=False,
         )
 
+        self.buttonApplyImgSelect = widgets.Button(
+            description='Apply',
+            disabled=False,
+            button_style='', # 'success', 'info', 'warning', 'danger' or ''
+            tooltip='Click me',
+            icon='check', # (FontAwesome names without the `fa-` prefix)
+
+        )
+        self.buttonApplyImgSelect.layout.visibility = 'hidden'
+
     def initImageBoxes(self):
         imagesH = None
         imagesWList = []
@@ -299,10 +313,10 @@ class singleUI(object):
                 imageVBox = widgets.VBox([titleW, freezeW, imageW])
                 imagesWList.append(imageVBox)
             box_layout = widgets.Layout(overflow='scroll hidden',
-                    border='3px solid green',
+                    border='3px solid black',
                     width='100%',
                     height='',
-                    flex_flow='row',
+                    flex_flow='row wrap',
                     display='flex')
             self.logger.debug("imagesWList=%s", imagesWList)
             if self.imageWDisplay is not None:
@@ -337,13 +351,34 @@ class singleUI(object):
             self.exception(self.seg)
             raise
 
+    def initDataFrameBoxes(self):
+        # https://hub.gke2.mybinder.org/user/quantopian-qgrid-notebooks-lln1r8wy/notebooks/index.ipynb
+        try:
+            df = pd.read_csv('./data/dataScored.csv', header=0)
+            qgrid_widget = qgrid.show_grid(df, show_toolbar=False)
+            qgrid_widget.layout = widgets.Layout(width='100%')
+            box_layout = widgets.Layout(overflow='scroll hidden',
+                    border='3px solid black',
+                    width='100%',
+                    height='',
+                    flex_flow='row nowrap',
+                    display='flex')
+            self.qgrid1 = widgets.HBox(qgrid_widget, layout=box_layout)
+            return(self.qgrid1)
+        except:
+            self.logger.exception("")
+            raise
+
+
+
     def initObserve(self):
-        # self.imageSelect.observe(self.on_imageSelect_chan ge, names='value')
+        self.imageSelect.observe(self.on_imageSelect_change, names='value')
         # imageWidth.observe(on_width_change, names='value')
         self.buttonLoad.on_click(self.on_load_clicked)
         self.buttonPrev.on_click(self.on_prev_clicked)
         self.buttonNext.on_click(self.on_next_clicked)
         self.select_id.observe(self.on_select_id_change, names='value')
+        # self.buttonApplyImgSelect(self.on_image_select_change, names='value')
 
     def on_load_clicked(self, b):
         self.logger.debug(b)
@@ -395,6 +430,7 @@ class singleUI(object):
         self.logger.debug(change)
         new_value = change['new']
         self.logger.debug("new_value=%s", new_value)
+        self.buttonApplyImgSelect.layout.visibility = 'visible'
         # ids = (int(new_value),)
         # self.load(ids)
         # if self.seg is not None :
@@ -441,10 +477,11 @@ class singleUI(object):
                     border='3px solid black',
                     width='100%',
                     height='',
-                    flex_flow='row',
+                    flex_flow='row wrap',
                     display='flex')
-        controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.imageWidth, self.imageSelect], layout=box_layout)
-        output = widgets.VBox([controlW, self.initImageBoxes()])
+        controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.imageWidth,
+                self.imageSelect, self.buttonApplyImgSelect], layout=box_layout)
+        output = widgets.VBox([controlW, self.initImageBoxes(), self.initDataFrameBoxes()])
         self.baseW = output
         return(output)
 
