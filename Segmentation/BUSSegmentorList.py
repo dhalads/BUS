@@ -23,14 +23,15 @@ import logging
 class BUSSegmentorList(object):
 
     logger = logging.getLogger("BUS." + __name__)
-    BUSList = []
-    isError = False
-    errorMessages =  []
-    idString = None
-    idList = None
+
 
     def __init__(self):
         self.logger.debug("in init")
+        self.BUSList = []
+        self.isError = False
+        self.errorMessages =  []
+        self.idString = None
+        self.idList = None
 
     def loadDataSetB(self, ids):
         countFileNotFound = 0

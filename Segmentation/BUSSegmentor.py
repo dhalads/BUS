@@ -24,25 +24,26 @@ class BUSSegmentor(object):
 
     logger = logging.getLogger("BUS." + __name__)
 
-    id = None
-    images = {}
-    image = None
-    PILimage = None
-    imageName = None
-    imageGT = None
-    PILimageGT = None
-    imageCorner = None
-    imageBoxROI = None
-    imageROICropped = None
-    imagePosterior = None
-    imageMarginal = None
-    imageCannyEdge = None
-    imageContours = None
-    contourStats = None
+
 
     def __init__(self):
         pass
         self.logger.debug("in init")
+        self.id = None
+        self.images = {}
+        self.image = None
+        self.PILimage = None
+        self.imageName = None
+        self.imageGT = None
+        self.PILimageGT = None
+        self.imageCorner = None
+        self.imageBoxROI = None
+        self.imageROICropped = None
+        self.imagePosterior = None
+        self.imageMarginal = None
+        self.imageCannyEdge = None
+        self.imageContours = None
+        self.contourStats = None
 
     def addImage(self, name, image, roiStats, annotation, response):
         output = {}

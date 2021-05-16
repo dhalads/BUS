@@ -29,13 +29,15 @@ import pandas as pd
 from io import StringIO
 import io
 import cv2
-import qgrid
+from ipydatagrid import DataGrid
 
 
 class ProcessImage(object):
 
     logger = logging.getLogger("BUS." + __name__)
-    segList = None
+
+    def __init__(self):
+        self.segList = None
 
     # def show_images(images: List[numpy.ndarray]) -> None:
     def show_images(self, images):
@@ -156,7 +158,9 @@ class ProcessImage(object):
 class busUI(object):
 
     logger = logging.getLogger("BUS." + __name__)
-    segList = None
+
+    def __init__(self):
+        self.segList = None
 
     def load(self, ids):
         self.segList = BUSSegmentorList()
@@ -192,18 +196,21 @@ class busUI(object):
 class singleUI(object):
 
     logger = logging.getLogger("BUS." + __name__)
-    parent = None
-    baseW = None
-    seg = None
-    segList = None
-    idWList = None
-    buttonLoad = None
-    select_id = None
-    imageWidth = None
-    imageSelect = None
-    imageWDisplay = None
-    buttonApplyImgSelect = None
-    qgrid1 = None
+
+
+    def __init__(self):
+        self.parent = None
+        self.baseW = None
+        self.seg = None
+        self.segList = None
+        self.idWList = None
+        self.buttonLoad = None
+        self.select_id = None
+        self.imageWidth = None
+        self.imageSelect = None
+        self.imageWDisplay = None
+        self.buttonApplyImgSelect = None
+        self.qgrid1 = None
 
     def setSegList(self, seglist):
         self.segList = seglist
@@ -355,15 +362,18 @@ class singleUI(object):
         # https://hub.gke2.mybinder.org/user/quantopian-qgrid-notebooks-lln1r8wy/notebooks/index.ipynb
         try:
             df = pd.read_csv('./data/dataScored.csv', header=0)
-            qgrid_widget = qgrid.show_grid(df, show_toolbar=False)
-            qgrid_widget.layout = widgets.Layout(width='100%')
+            # qgrid_widget = qgrid.show_grid(df, show_toolbar=False)
+            # qgrid_widget.layout = widgets.Layout(width='100%')
             box_layout = widgets.Layout(overflow='scroll hidden',
                     border='3px solid black',
                     width='100%',
                     height='',
                     flex_flow='row nowrap',
                     display='flex')
-            self.qgrid1 = widgets.HBox(qgrid_widget, layout=box_layout)
+            # datagrid = DataGrid(df, base_row_size=32, base_column_size=150)
+            # datagrid = DataGrid(df, selection_mode="cell", editable=True)
+            datagrid = DataGrid(df, layout={"height":"200px"})
+            self.qgrid1 = widgets.HBox([datagrid], layout=box_layout)
             return(self.qgrid1)
         except:
             self.logger.exception("")
@@ -382,6 +392,7 @@ class singleUI(object):
 
     def on_load_clicked(self, b):
         self.logger.debug(b)
+        breakpoint()
         listString = self.idWList.value
         result = self.valid_id_string(listString)
         self.logger.debug(result)
