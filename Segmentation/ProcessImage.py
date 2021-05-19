@@ -30,6 +30,8 @@ from io import StringIO
 import io
 import cv2
 from ipydatagrid import DataGrid
+# from beakerx import *
+# from beakerx.object import beakerx
 
 
 class ProcessImage(object):
@@ -211,6 +213,7 @@ class singleUI(object):
         self.imageWDisplay = None
         self.buttonApplyImgSelect = None
         self.qgrid1 = None
+        self.compView = None
 
     def setSegList(self, seglist):
         self.segList = seglist
@@ -323,7 +326,7 @@ class singleUI(object):
                     border='3px solid black',
                     width='100%',
                     height='',
-                    flex_flow='row wrap',
+                    flex_flow='row nowrap',
                     display='flex')
             self.logger.debug("imagesWList=%s", imagesWList)
             if self.imageWDisplay is not None:
@@ -377,6 +380,90 @@ class singleUI(object):
             return(self.qgrid1)
         except:
             self.logger.exception("")
+            raise
+
+    def initComparisonView(self):
+        compView = None
+        try:
+
+            compTitle = widgets.Label(value="Comparison View")
+            if self.seg is not None :
+                opts = list(self.seg.images.keys())
+            else:
+                opts = ["None"]
+            compImageSelect = widgets.SelectMultiple(
+                options=opts,
+                value=opts,
+                description='Images:',
+                disabled=False,
+            )
+            widthOpts = [300,400,500,600,700,800, 1600, 2400]
+            compImageWidth = widgets.Dropdown(
+                options=widthOpts,
+                value=widthOpts[0],
+                description='Image width:',
+                disabled=False
+            )
+
+            box_layout = widgets.Layout(overflow='scroll hidden',
+                    border='3px solid black',
+                    width='100%',
+                    height='',
+                    flex_flow='row nowrap',
+                    display='flex')
+
+            compControls = widgets.HBox([compTitle, compImageSelect, compImageWidth])
+            compImageView = widgets.Hbox([])
+            compView = widgets.VBox([compControls, compImageView], layout = box_layout)
+            self.compView = compView
+        except:
+            self.logger.exception("")
+            raise
+        return(self.compView)
+
+    def initCompImageView(self):
+        imagesH = None
+        imagesWList = []
+
+        try:
+
+            if self.seg is not None :
+                opts = list(self.seg.images.keys())
+                self.logger.debug("id=%s", self.seg.id)
+            else:
+                opts = []
+            for opt in opts:
+                titleW = widgets.Label(value=opt)
+                freezeW = widgets.Checkbox(
+                            value=False,
+                            description='Freeze',
+                            disabled=False,
+                            indent=False
+                        )
+                imageBytes = self.getImageBytes(self.seg.images.get(opt).get('image'))
+                imageW = widgets.Image(
+                    value=imageBytes,
+                    format='png',
+                    width=self.imageWidth.value
+                )
+                imageVBox = widgets.VBox([titleW, freezeW, imageW])
+                imagesWList.append(imageVBox)
+            box_layout = widgets.Layout(overflow='scroll hidden',
+                    border='3px solid black',
+                    width='100%',
+                    height='',
+                    flex_flow='row nowrap',
+                    display='flex')
+            self.logger.debug("imagesWList=%s", imagesWList)
+            if self.imageWDisplay is not None:
+                self.imageWDisplay.children = imagesWList
+            else:
+                self.imageWDisplay = widgets.VBox(imagesWList, layout=box_layout)
+            return( self.imageWDisplay)
+
+        except:
+            self.logger.exception("")
+            self.error(self.seg)
             raise
 
 
@@ -492,7 +579,7 @@ class singleUI(object):
                     display='flex')
         controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.imageWidth,
                 self.imageSelect, self.buttonApplyImgSelect], layout=box_layout)
-        output = widgets.VBox([controlW, self.initImageBoxes(), self.initDataFrameBoxes()])
+        output = widgets.VBox([controlW, self.initImageBoxes(), self.initDataFramePanel()])
         self.baseW = output
         return(output)
 

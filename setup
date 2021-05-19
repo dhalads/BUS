@@ -1,0 +1,25 @@
+#Install anaconda
+
+conda env list
+conda activate base
+
+# isntall notebook and lab in base env
+conda install -c conda-forge notebook
+conda install -c conda-forge nb_conda_kernels
+
+conda install -c conda-forge jupyterlab
+conda install -c conda-forge nb_conda_kernels
+
+
+conda install -c conda-forge jupyter_contrib_nbextensions
+
+# fix error when start notebook in wsl
+# https://www.cicoria.com/jupyter-notebook-launch-browser-from-wsl/
+
+# Start jupyter notebook
+# jupyter notebook
+
+conda create –name bus python=3.6
+conda activate bus
+conda install numpy matplotlib scipy scikit-image opencv pycaret ipywidgets ipydatagrid pandas Pillow
+

@@ -24,8 +24,6 @@ class BUSSegmentor(object):
 
     logger = logging.getLogger("BUS." + __name__)
 
-
-
     def __init__(self):
         pass
         self.logger.debug("in init")
