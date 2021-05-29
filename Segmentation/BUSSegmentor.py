@@ -181,7 +181,7 @@ class BUSSegmentor(object):
 
         return cnt_scaled
 
-    def findContours(self, addImages=False):
+    def findContours(self, addImages=False, addContourImages=False):
         # https://automaticaddison.com/how-to-detect-and-draw-contours-in-images-using-opencv/
         orig = asarray(self.PILimage)
         if addImages:
@@ -218,23 +218,25 @@ class BUSSegmentor(object):
         with_contours = cv2.drawContours(self.image.copy(), contours, -1,(255, 255, 255),1)
         if addImages:
             self.addImage("With Contours", with_contours, None, None, None)
-
-        # Show the total number of contours that were detected
-        self.logger.debug('Total number of contours detected: %s', str(len(contours)))
-        stats = [self.createContourStats(x, contours[x], GTcnt) for x in range(len(contours))]
-        # print(stats)
-        df = pd.DataFrame(stats)
-        self.contourStats = df
-        # df[df.columns.difference(["cnt"])].to_csv('stats.csv')
-        df1 = df.loc[(df['area'] > 300) & (df['area'] < 100000)]
-        shape1 = self.image.shape
-        df2 = df1.loc[(df1['leftx'] > 30 ) & (df1['rightx'] < shape1[1] - 30) & (df1['topy'] > 30) & (df1['bottomy'] < shape1[0] - 30) & (df1['aspect_ratio'] < 5.5)]
-        # df2.sort_values(by=['area'], ascending=False, inplace=True)
-        df2.sort_values(by=['mean_val'], ascending=True, inplace=True)
-        self.logger.debug("\n" + str(df2[df2.columns.difference(["cnt"])]))
-        tmpImg = self.image.copy()
-        cntList = df2['cnt'].tolist()
-        self.logger.debug("Numbers of contours plotted=%s", str(len(cntList)))
+        if addContourImages :
+            # Show the total number of contours that were detected
+            self.logger.debug('Total number of contours detected: %s', str(len(contours)))
+            stats = [self.createContourStats(x, contours[x], GTcnt) for x in range(len(contours))]
+            # print(stats)
+            df = pd.DataFrame(stats)
+            self.contourStats = df
+            # df[df.columns.difference(["cnt"])].to_csv('stats.csv')
+            df1 = df.loc[(df['area'] > 300) & (df['area'] < 100000)]
+            shape1 = self.image.shape
+            df2 = df1.loc[(df1['leftx'] > 30 ) & (df1['rightx'] < shape1[1] - 30) & (df1['topy'] > 30) & (df1['bottomy'] < shape1[0] - 30) & (df1['aspect_ratio'] < 5.5)]
+            # df2.sort_values(by=['area'], ascending=False, inplace=True)
+            df2.sort_values(by=['mean_val'], ascending=True, inplace=True)
+            self.logger.debug("\n" + str(df2[df2.columns.difference(["cnt"])]))
+            tmpImg = self.image.copy()
+            cntList = df2['cnt'].tolist()
+            self.logger.debug("Numbers of contours plotted=%s", str(len(cntList)))
+        else:
+            cntList = []
         if len(cntList) > 0 :
             bestCntId = df2['cnt_id'].tolist()[0]
             if addImages:

@@ -144,20 +144,30 @@ class ProcessImage(object):
         import sys
         import logging
         import json, logging.config
-        localPath = "c:\\Users\\djhalama\\Documents\\GitHub\\BUS"
-        if os.path.exists(localPath):
-            # print(f"localPath exists: {localPath}")
-            os.chdir("c:\\Users\\djhalama\\Documents\\GitHub\\BUS")
-        else:
+
+        from IPython.core.display import display, HTML
+        display(HTML("<style>.container { width:100% !important; }</style>"))
+
+        if "google.colab" in sys.modules:
             from google.colab import drive
             drive.mount('/content/gdrive')
-            os.chdir('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS')
-            sys.path.append('/content/gdrive/MyDrive/BUS_Project_Home/Share_with_group/David_Halama/BUS/Segmentation')
-        from Common import Common
-        # https://coralogix.com/log-analytics-blog/python-logging-best-practices-tips/
-        with open('logging-config.json', 'rt') as f:
-            config = json.load(f)
-            logging.config.dictConfig(config)
+            os.chdir('/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home/Share_with_group/David_Halama/BUS')
+            sys.path.append('/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home/Share_with_group/David_Halama/BUS/Segmentation')
+            from Common import Common
+            Common.HomeProjectFolder = "/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home"
+            # print(os.getcwd())
+            # !ls -la /content/gdrive/MyDrive
+            with open('logging-config-colab.json', 'rt') as f:
+                config = json.load(f)
+                logging.config.dictConfig(config)
+        else:
+            os.chdir('c:/Users/djhalama/Documents/GitHub/BUS')
+            sys.path.append('c:/Users/djhalama/Documents/GitHub/BUS/Segmentation')
+            from Common import Common
+            Common.HomeProjectFolder = "C:/Users/djhalama/Documents/Education/DS-785/BUS Project Home"
+            with open('logging-config.json', 'rt') as f:
+                config = json.load(f)
+                logging.config.dictConfig(config)
 
 class busUI(object):
 
@@ -436,7 +446,7 @@ class singleUI(object):
             raise
         return(self.compView)
 
-    def initCompImageView(self):
+    def initCompImageView3(self):
         imagesH = None
         imagesWList = []
         imageBox = None
@@ -517,7 +527,7 @@ class singleUI(object):
             gridWidth = len(opts)
             gridLength = len(images)
             gridlayout=widgets.Layout(width='100%',
-                                        grid_template_columns='max-content max-content max-content max-content amax-content max-content',
+                                        grid_template_columns='max-content max-content max-content max-content max-content max-content',
                                         grid_template_rows='auto auto auto auto auto auto auto',
                                         grid_gap='5px 5px',
                                         grid_template_areas='''
@@ -539,6 +549,137 @@ class singleUI(object):
             self.logger.exception("")
             self.error(self.segList)
             raise
+
+    def initCompImageView(self, isHorizontal=True):
+        imagesH = None
+        imagesWList = []
+        imageBox = None
+
+        try:
+            legendList = []
+            if isHorizontal:
+                rownum = 1
+                colnum = 1
+            else:
+                rownum = 1
+                colnum = 1
+            gridarea, gridcolumn, gridrow = self.getLayoutGrid(colnum, rownum)
+            gridarea = str(1) + "-" + str(1)
+            idLegend = widgets.Label(value="id->", layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row=gridrow ))
+            legendList.append(idLegend)
+            if self.segList is not None :
+                opts = self.imageSelect.value
+            else:
+                opts = []
+            # if self.seg is not None :
+            #     opts = list(self.seg.images.keys())
+            #     self.logger.debug("id=%s", self.seg.id)
+            # else:
+            #     opts = []
+            for idxopt, opt in enumerate(opts):
+                if isHorizontal:
+                    rownum = 1
+                    colnum = idxopt + 2
+                else:
+                    rownum = idxopt + 2
+                    colnum = 1
+                gridarea, gridcolumn, gridrow = self.getLayoutGrid(colnum, rownum)
+                imageNameLegend = widgets.Label(value=opt, layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row=gridrow, width = 'max-content'))
+                legendList.append(imageNameLegend)
+            # legendVBox = widgets.VBox(legendList)
+            # imagesWList.append(legendVBox)
+            imagesWList.extend(legendList)
+
+
+
+            if self.segList is not None :
+                images = self.getCompImageList()
+            else:
+                images = []
+
+            for idximg, img in enumerate(images):
+                VList = []
+                titleW = widgets.Label(value=str(img.id)
+                # layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row="1 / 1")
+                )
+                # VList.append(titleW)
+                if img.id in self.freezeList:
+                    freezeValue = True
+                else:
+                    freezeValue = False
+                freezeW = widgets.Checkbox(
+                            value=freezeValue,
+                            description='Freeze -> ' + str(img.id),
+                            disabled=False,
+                            indent=False
+                            # layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row="1 / 1")
+                        )
+                freezeW.observe(self.on_freeze_change, names='value')
+                if isHorizontal:
+                    rownum = idximg + 2
+                    colnum = 1
+                else:
+                    rownum = 1
+                    colnum = idximg + 2
+                gridarea, gridcolumn, gridrow = self.getLayoutGrid(colnum, rownum)
+                topgrid = widgets.HBox([titleW, freezeW], layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row=gridrow))
+                VList.append(topgrid)
+                for idxopt, opt in enumerate(opts):
+                    imageBytes = self.getImageBytes(img.images.get(opt).get('image'))
+                    if isHorizontal:
+                        rownum = idximg + 2
+                        colnum = idxopt + 2
+                    else:
+                        rownum = idxopt + 2
+                        colnum = idximg + 2
+                    gridarea, gridcolumn, gridrow = self.getLayoutGrid(colnum, rownum)
+                    imageW = widgets.Image(
+                        value=imageBytes,
+                        format='png',
+                        width=self.imageWidth.value,
+                        layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row=gridrow)
+                    )
+                    VList.append(imageW)
+                # imageVBox = widgets.VBox(VList)
+                # imagesWList.append(imageVBox)
+                imagesWList.extend(VList)
+            box_layout = widgets.Layout(overflow='scroll hidden',
+                                        border='3px solid black',
+                                        width='100%',
+                                        height='',
+                                        flex_flow='row nowrap',
+                                        display='flex')
+            gridWidth = len(opts)
+            gridLength = len(images)
+            gridlayout=widgets.Layout(width='100%',
+                                        grid_template_columns='100px max-content max-content max-content max-content max-content max-content max-content',
+                                        grid_template_rows='auto auto auto auto auto auto auto auto auto',
+                                        grid_gap='5px 5px',
+                                        grid_template_areas='''
+                                            "1-1 2-1 3-1 4-1"
+                                            "1-2 2-2 3-2 4-2"
+                                            "1-3 2-3 3-3 4-3"
+                                            ''')
+            self.logger.debug("imagesWList=%s", imagesWList)
+            if self.compImageView is not None:
+                self.compImageView.layout = gridlayout
+                self.compImageView.children = imagesWList
+            else:
+                self.compImageView.layout = gridlayout
+                self.compImageView.children = imagesWList
+            self.logger.debug("compImageView=%s", self.compImageView)
+            return( self.compImageView)
+
+        except:
+            self.logger.exception("")
+            self.error(self.segList)
+            raise
+
+    def getLayoutGrid(self, colnum, rownum):
+        gridarea = str(colnum) + "-" + str(rownum)
+        gridcolumn = str(colnum) + " / " + str(colnum)
+        gridrow = str(rownum) + " / " + str(rownum)
+        return((gridarea, gridcolumn, gridrow))
 
     def getCompImageList(self):
         output = []
