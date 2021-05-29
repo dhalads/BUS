@@ -213,7 +213,7 @@ class BUSSegmentor(object):
             self.addImage("With Contours", with_contours, None, None, None)
 
         # Show the total number of contours that were detected
-        print('Total number of contours detected: ' + str(len(contours)))
+        self.logger.debug('Total number of contours detected: %s', str(len(contours)))
         stats = [self.createContourStats(x, contours[x], GTcnt) for x in range(len(contours))]
         # print(stats)
         df = pd.DataFrame(stats)
@@ -227,7 +227,7 @@ class BUSSegmentor(object):
         self.logger.debug("\n" + str(df2[df2.columns.difference(["cnt"])]))
         tmpImg = self.image.copy()
         cntList = df2['cnt'].tolist()
-        print('Numbers of contours plotted=' + str(len(cntList)))
+        self.logger.debug("Numbers of contours plotted=%s", str(len(cntList)))
         if len(cntList) > 0 :
             bestCntId = df2['cnt_id'].tolist()[0]
             if addImages:

@@ -39,12 +39,15 @@ class BUSSegmentorList(object):
             isList = ids
             for id in ids:
                 try:
-                    seg = BUSSegmentor()
-                    seg.id = id
-                    name = str(id).zfill(6) +".png"
-                    seg.loadImage(name)
-                    seg.loadImageGT()
-                    self.BUSList.append(seg)
+                    if not self.isLoaded(id):
+                        seg = BUSSegmentor()
+                        seg.id = id
+                        name = str(id).zfill(6) +".png"
+                        seg.loadImage(name)
+                        seg.loadImageGT()
+                        seg.findContours(addImages=True)
+                        self.BUSList.append(seg)
+                        self.BUSList.sort(key=lambda x: x.id)
                     # raise Exception("Made it ok.")
                 except FileNotFoundError as nf:
                     self.isError = True
@@ -71,6 +74,18 @@ class BUSSegmentorList(object):
         finally:
             pass
         self.logger.debug("Results loadDataSetB: loaded=%s, failed=%s", len(self.BUSList), countFileNotFound, exc_info=True)
+
+    def isLoaded(self, id):
+        output = False
+        try:
+            for seg in self.BUSList :
+                if seg.id == id :
+                    output = True
+                    break
+            return(output)
+        except:
+            self.logger.exception("")
+            raise
 
     def saveGTStats(self):
         output = []

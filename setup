@@ -23,3 +23,11 @@ conda create –name bus python=3.6
 conda activate bus
 conda install numpy matplotlib scipy scikit-image opencv pycaret ipywidgets ipydatagrid pandas Pillow
 
+
+# Cannot find cv2
+# https://izziswift.com/cannot-find-module-cv2-when-using-opencv/
+
+#conda activate base
+#conda update anaconda-navigator
+#conda update navigator-updater
+

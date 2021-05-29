@@ -41,14 +41,14 @@
       "level": "DEBUG",
       "formatter": "basic",
       "mode": "a",
-      "filename": "logs/BUS.log"
+      "filename": "/tmp/BUS.log"
     },
     "fileW": {
       "class": "logging.FileHandler",
       "level": "DEBUG",
       "formatter": "basic",
       "mode": "w",
-      "filename": "logs/BUS_W.log"
+      "filename": "/tmp/BUS_W.log"
     }
   },
   "loggers": {

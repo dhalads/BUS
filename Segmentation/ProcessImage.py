@@ -29,7 +29,7 @@ import pandas as pd
 from io import StringIO
 import io
 import cv2
-from ipydatagrid import DataGrid
+# from ipydatagrid import DataGrid
 # from beakerx import *
 # from beakerx.object import beakerx
 
@@ -142,6 +142,8 @@ class ProcessImage(object):
     def main(self):
         import os
         import sys
+        import logging
+        import json, logging.config
         localPath = "c:\\Users\\djhalama\\Documents\\GitHub\\BUS"
         if os.path.exists(localPath):
             # print(f"localPath exists: {localPath}")
@@ -163,6 +165,7 @@ class busUI(object):
 
     def __init__(self):
         self.segList = None
+        self.UI = None
 
     def load(self, ids):
         self.segList = BUSSegmentorList()
@@ -190,6 +193,7 @@ class busUI(object):
         tmp = []
         tmp.append(singleUIObj.getOutput())
         singleVBox = widgets.VBox(tmp)
+        self.UI = singleVBox
         display(singleVBox)
 
         singleUIObj.initObserve()
@@ -203,8 +207,9 @@ class singleUI(object):
     def __init__(self):
         self.parent = None
         self.baseW = None
-        self.seg = None
         self.segList = None
+        self.seg = None
+        self.freezeSegList = None
         self.idWList = None
         self.buttonLoad = None
         self.select_id = None
@@ -212,22 +217,26 @@ class singleUI(object):
         self.imageSelect = None
         self.imageWDisplay = None
         self.buttonApplyImgSelect = None
+        self.singleSelectedImages = None
         self.qgrid1 = None
         self.compView = None
+        self.compControls = None
+        self.compImageView = None
+        self.select_num_to_display = None
 
     def setSegList(self, seglist):
         self.segList = seglist
         # id = seg.id
-    
-    def setSeg(self, segment):
-        self.seg = segment
-        # id = seg.id
+
+    # def setSeg(self, segment):
+    #     self.seg = segment
+    #     # id = seg.id
     
     def initUI(self):
-        if self.seg is not None:
-            id = self.seg.id
-        else:
-            id = 0
+        # if self.seg is not None:
+        #     id = self.seg.id
+        # else:
+        #     id = 0
         
         self.idWList = widgets.Text(
             value="4-6",
@@ -250,7 +259,7 @@ class singleUI(object):
             description='Number:',
             disabled=False,
         )
-        
+
         self.buttonPrev = widgets.Button(
             description='< Prev',
             disabled=False,
@@ -266,7 +275,14 @@ class singleUI(object):
             tooltip='Click me',
             icon='check' # (FontAwesome names without the `fa-` prefix)
         )
-        
+
+        self.select_num_to_display = widgets.Dropdown(
+            options=['1', '2', '3', '4', '5'],
+            value='1',
+            description='Number to Display:',
+            disabled=False,
+        )
+
         widthOpts = [300,400,500,600,700,800, 1600, 2400]
         self.imageWidth = widgets.Dropdown(
             options=widthOpts,
@@ -277,7 +293,7 @@ class singleUI(object):
         if self.seg is not None :
             opts = list(self.seg.images.keys())
         else:
-            opts = ["None"]
+            opts = ["Original"]
         self.imageSelect = widgets.SelectMultiple(
             options=opts,
             value=opts,
@@ -293,7 +309,7 @@ class singleUI(object):
             icon='check', # (FontAwesome names without the `fa-` prefix)
 
         )
-        self.buttonApplyImgSelect.layout.visibility = 'hidden'
+        # self.buttonApplyImgSelect.layout.visibility = 'hidden'
 
     def initImageBoxes(self):
         imagesH = None
@@ -302,25 +318,24 @@ class singleUI(object):
         try:
 
             if self.seg is not None :
-                opts = list(self.seg.images.keys())
-                self.logger.debug("id=%s", self.seg.id)
+                opts = self.imageSelect.value
             else:
                 opts = []
             for opt in opts:
                 titleW = widgets.Label(value=opt)
-                freezeW = widgets.Checkbox(
-                            value=False,
-                            description='Freeze',
-                            disabled=False,
-                            indent=False
-                        )
+                # freezeW = widgets.Checkbox(
+                #             value=False,
+                #             description='Freeze',
+                #             disabled=False,
+                #             indent=False
+                #         )
                 imageBytes = self.getImageBytes(self.seg.images.get(opt).get('image'))
                 imageW = widgets.Image(
                     value=imageBytes,
                     format='png',
                     width=self.imageWidth.value
                 )
-                imageVBox = widgets.VBox([titleW, freezeW, imageW])
+                imageVBox = widgets.VBox([titleW, imageW])
                 imagesWList.append(imageVBox)
             box_layout = widgets.Layout(overflow='scroll hidden',
                     border='3px solid black',
@@ -361,7 +376,7 @@ class singleUI(object):
             self.exception(self.seg)
             raise
 
-    def initDataFrameBoxes(self):
+    def initDataFramePanel(self):
         # https://hub.gke2.mybinder.org/user/quantopian-qgrid-notebooks-lln1r8wy/notebooks/index.ipynb
         try:
             df = pd.read_csv('./data/dataScored.csv', header=0)
@@ -375,15 +390,15 @@ class singleUI(object):
                     display='flex')
             # datagrid = DataGrid(df, base_row_size=32, base_column_size=150)
             # datagrid = DataGrid(df, selection_mode="cell", editable=True)
-            datagrid = DataGrid(df, layout={"height":"200px"})
-            self.qgrid1 = widgets.HBox([datagrid], layout=box_layout)
+            # datagrid = DataGrid(df, layout={"height":"200px"})
+            self.qgrid1 = widgets.HBox([], layout=box_layout)
             return(self.qgrid1)
         except:
             self.logger.exception("")
             raise
 
     def initComparisonView(self):
-        compView = None
+
         try:
 
             compTitle = widgets.Label(value="Comparison View")
@@ -412,10 +427,9 @@ class singleUI(object):
                     flex_flow='row nowrap',
                     display='flex')
 
-            compControls = widgets.HBox([compTitle, compImageSelect, compImageWidth])
-            compImageView = widgets.Hbox([])
-            compView = widgets.VBox([compControls, compImageView], layout = box_layout)
-            self.compView = compView
+            self.compControls = widgets.HBox([compTitle, compImageSelect, compImageWidth])
+            self.compImageView = widgets.GridBox()
+            self.compView = widgets.VBox([self.compImageView], layout = box_layout)
         except:
             self.logger.exception("")
             raise
@@ -424,52 +438,134 @@ class singleUI(object):
     def initCompImageView(self):
         imagesH = None
         imagesWList = []
+        imageBox = None
 
         try:
-
-            if self.seg is not None :
-                opts = list(self.seg.images.keys())
-                self.logger.debug("id=%s", self.seg.id)
+            legendList = []
+            gridarea = str(1) + "-" + str(1)
+            idLegend = widgets.Label(value="id->", layout=widgets.Layout(grid_area=gridarea, grid_column="1 / 1",grid_row="1 / 1" ))
+            legendList.append(idLegend)
+            if self.segList is not None :
+                opts = self.imageSelect.value
             else:
                 opts = []
-            for opt in opts:
-                titleW = widgets.Label(value=opt)
+            # if self.seg is not None :
+            #     opts = list(self.seg.images.keys())
+            #     self.logger.debug("id=%s", self.seg.id)
+            # else:
+            #     opts = []
+            for idxopt, opt in enumerate(opts):
+                gridarea = str(1) + "-" + str(idxopt + 3)
+                gridrow = str(idxopt + 2) + " / " + str(idxopt + 2)
+                imageNameLegend = widgets.Label(value=opt, layout=widgets.Layout(grid_area=gridarea, grid_column="1 / 1",grid_row=gridrow, textWrap="true"))
+                legendList.append(imageNameLegend)
+            # legendVBox = widgets.VBox(legendList)
+            # imagesWList.append(legendVBox)
+            imagesWList.extend(legendList)
+
+
+
+            if self.segList is not None :
+                images = self.getCompImageList()
+            else:
+                images = []
+
+            for idximg, img in enumerate(images):
+                VList = []
+                gridcolumn = str(idximg + 2) + " / " + str(idximg + 2)
+                gridarea = str(idximg + 2) + "-" + str(1)
+                titleW = widgets.Label(value=str(img.id)
+                # layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row="1 / 1")
+                )
+                # VList.append(titleW)
+                gridarea = str(idximg + 2) + "-" + str(2)
                 freezeW = widgets.Checkbox(
                             value=False,
                             description='Freeze',
                             disabled=False,
                             indent=False
+                            # layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row="1 / 1")
                         )
-                imageBytes = self.getImageBytes(self.seg.images.get(opt).get('image'))
-                imageW = widgets.Image(
-                    value=imageBytes,
-                    format='png',
-                    width=self.imageWidth.value
-                )
-                imageVBox = widgets.VBox([titleW, freezeW, imageW])
-                imagesWList.append(imageVBox)
+                topgrid = widgets.HBox([titleW, freezeW], layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row="1 / 1"))
+                VList.append(topgrid)
+                for idxopt, opt in enumerate(opts):
+                    imageBytes = self.getImageBytes(img.images.get(opt).get('image'))
+                    gridrow = str(idxopt+2) + " / " + str(idxopt+2)
+                    gridarea = str(idximg + 2) + "-" + str(idxopt+3)
+                    imageW = widgets.Image(
+                        value=imageBytes,
+                        format='png',
+                        width=self.imageWidth.value,
+                        layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row=gridrow)
+                    )
+                    VList.append(imageW)
+                # imageVBox = widgets.VBox(VList)
+                # imagesWList.append(imageVBox)
+                imagesWList.extend(VList)
             box_layout = widgets.Layout(overflow='scroll hidden',
-                    border='3px solid black',
-                    width='100%',
-                    height='',
-                    flex_flow='row nowrap',
-                    display='flex')
+                                        border='3px solid black',
+                                        width='100%',
+                                        height='',
+                                        flex_flow='row nowrap',
+                                        display='flex')
+            gridWidth = len(opts)
+            gridLength = len(images)
+            gridlayout=widgets.Layout(width='100%',
+                                        grid_template_columns='5% auto auto auto auto auto',
+                                        grid_template_rows='auto auto auto auto auto auto auto',
+                                        grid_gap='5px 5px',
+                                        grid_template_areas='''
+                                            "1-1 2-1 3-1 4-1"
+                                            "1-2 2-2 3-2 4-2"
+                                            "1-3 2-3 3-3 4-3"
+                                            ''')
             self.logger.debug("imagesWList=%s", imagesWList)
-            if self.imageWDisplay is not None:
-                self.imageWDisplay.children = imagesWList
+            if self.compImageView is not None:
+                self.compImageView.layout = gridlayout
+                self.compImageView.children = imagesWList
             else:
-                self.imageWDisplay = widgets.VBox(imagesWList, layout=box_layout)
-            return( self.imageWDisplay)
+                self.compImageView.layout = gridlayout
+                self.compImageView.children = imagesWList
+            self.logger.debug("compImageView=%s", self.compImageView)
+            return( self.compImageView)
 
         except:
             self.logger.exception("")
-            self.error(self.seg)
+            self.error(self.segList)
             raise
+
+    def getCompImageList(self):
+        output = []
+        try:
+            idList = []
+            numToDisplay = int(self.select_num_to_display.value)
+            idList.append(int(self.select_id.value))
+            options = self.select_id.options
+            size = len(options)
+            idxList = [i for i, value in enumerate(self.select_id.options) if value == self.select_id.value]
+            idx = idxList[0]
+
+            for i in range(0,numToDisplay-1):
+                if len(idList) < len(options) :
+                    idx = idx + 1
+                    if idx == size :
+                        idx = 0
+                    idList.append(int(options[idx]))
+            self.logger.debug("idList=%s", idList)
+            self.load(idList)
+            for id in idList:
+                output.extend([x for x in self.segList.BUSList if x.id == id])
+            self.logger.debug("output=%s", output)
+        except:
+            self.logger.exception("")
+            raise
+        return(output)
 
 
 
     def initObserve(self):
         self.imageSelect.observe(self.on_imageSelect_change, names='value')
+        self.buttonApplyImgSelect.on_click(self.on_applyImgSelect_clicked)
         # imageWidth.observe(on_width_change, names='value')
         self.buttonLoad.on_click(self.on_load_clicked)
         self.buttonPrev.on_click(self.on_prev_clicked)
@@ -479,7 +575,6 @@ class singleUI(object):
 
     def on_load_clicked(self, b):
         self.logger.debug(b)
-        breakpoint()
         listString = self.idWList.value
         result = self.valid_id_string(listString)
         self.logger.debug(result)
@@ -489,6 +584,7 @@ class singleUI(object):
 
     def on_next_clicked(self, b):
         self.logger.debug(b)
+        self.logger.debug("dynamic code reload 2")
         options = self.select_id.options
         size = len(options)
         idxList = [i for i, value in enumerate(self.select_id.options) if value == self.select_id.value]
@@ -511,24 +607,31 @@ class singleUI(object):
 
     def on_select_id_change(self, change):
         self.logger.debug(change)
+        loadImageSelect = False
         new_value = change['new']
         self.logger.debug("new_value=%s", new_value)
         ids = (int(new_value),)
+        if self.segList is None:
+            loadImageSelect = True
         self.load(ids)
-        if self.seg is not None :
-            opts = list(self.seg.images.keys())
-        else:
-            opts = ["None"]
-        self.logger.debug("opts=%s", opts)
-        self.imageSelect.options = opts
-        self.imageSelect.value = opts
+        if loadImageSelect :
+            opts = list(self.segList.BUSList[0].images.keys())
+            self.imageSelect.options = opts
+            self.imageSelect.value = ["Original"]
+            self.logger.debug("opts=%s", opts)
+
         self.initImageBoxes()
+        self.initCompImageView()
 
     def on_imageSelect_change(self, change):
         self.logger.debug(change)
         new_value = change['new']
+        old_value = change['old']
         self.logger.debug("new_value=%s", new_value)
-        self.buttonApplyImgSelect.layout.visibility = 'visible'
+        self.logger.debug("old_value=%s", old_value)
+        if len(old_value) != 0 :
+            # self.buttonApplyImgSelect.layout.visibility = 'visible'
+            pass
         # ids = (int(new_value),)
         # self.load(ids)
         # if self.seg is not None :
@@ -539,18 +642,22 @@ class singleUI(object):
         # self.imageSelect.options = opts
         # self.imageSelect.value = opts
 
-
+    def on_applyImgSelect_clicked(self, b):
+        self.logger.debug("b=%s", b)
+        self.singleSelectedImages = list(self.imageSelect.value).copy()
+        self.logger.debug("self.singleSelectedImages=%s", self.singleSelectedImages)
+        self.initImageBoxes()
+        self.initCompImageView()
+        # self.buttonApplyImgSelect.layout.visibility = 'hidden'
 
     def load(self, ids):
-        if self.segList is not None:
-            self.logger.debug("id()=%s", id(self.segList))
-        self.segList = BUSSegmentorList()
-        self.logger.debug("id()=%s", id(self.segList))
+        if self.segList is None:
+            self.segList = BUSSegmentorList()
         self.segList.loadDataSetB(ids)
         size = len(self.segList.BUSList)
         self.logger.debug(f"segList size={size}")
         self.seg = self.segList.BUSList[size-1]
-        self.seg.findContours(addImages=True)
+        # self.seg.findContours(addImages=True)
 
     def valid_id_string(self, idString):
         message = ""
@@ -577,9 +684,9 @@ class singleUI(object):
                     height='',
                     flex_flow='row wrap',
                     display='flex')
-        controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.imageWidth,
+        controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.select_num_to_display, self.imageWidth,
                 self.imageSelect, self.buttonApplyImgSelect], layout=box_layout)
-        output = widgets.VBox([controlW, self.initImageBoxes(), self.initDataFramePanel()])
+        output = widgets.VBox([controlW, self.initImageBoxes(), self.initComparisonView(), self.initDataFramePanel()])
         self.baseW = output
         return(output)
 

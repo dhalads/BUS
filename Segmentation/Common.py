@@ -2,7 +2,14 @@ from pathlib import Path
 
 class Common(object):
 
+    HomeProjectFolder = None
+
     @staticmethod
     def getImagePath():
-        path = Path("/Users/djhalama/Documents/Education/DS-785/BUS Project Home/Datasets/BUS_Dataset_B")
+        path = Common.getHomeProjectPath() / "Datasets" / "BUS_Dataset_B"
+        return path
+
+    @staticmethod
+    def getHomeProjectPath():
+        path = Path(Common.HomeProjectFolder)
         return path

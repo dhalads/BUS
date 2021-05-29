@@ -4,13 +4,11 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-
-
     {
       "name": "Python: Remote Attach",
       "type": "python",
       "request": "attach",
-      "connect": { "host": "localhost", "port": 56658 },
+      "connect": { "host": "localhost", "port": 62430 },
       "pathMappings": [{ "localRoot": "${workspaceFolder}", "remoteRoot": "." }]
     },
 
