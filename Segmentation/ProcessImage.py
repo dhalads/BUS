@@ -234,6 +234,7 @@ class singleUI(object):
         self.compImageView = None
         self.select_num_to_display = None
         self.freezeList = []
+        self.displayOrientation = None
 
     def setSegList(self, seglist):
         self.segList = seglist
@@ -311,6 +312,16 @@ class singleUI(object):
             description='Images:',
             disabled=False,
         )
+
+        self.displayOrientation = widgets.RadioButtons(
+                options=['vertical', 'horizontal'],
+                value='vertical',
+            #    layout={'width': 'max-content'}, # If the items' names are long
+                description='Orientation',
+                disabled=False
+            )
+
+
 
         self.buttonApplyImgSelect = widgets.Button(
             description='Apply',
@@ -550,12 +561,16 @@ class singleUI(object):
             self.error(self.segList)
             raise
 
-    def initCompImageView(self, isHorizontal=True):
+    def initCompImageView(self):
         imagesH = None
         imagesWList = []
         imageBox = None
 
         try:
+            if self.displayOrientation.value == 'vertical':
+                isHorizontal = False
+            else:
+                isHorizontal = True
             legendList = []
             if isHorizontal:
                 rownum = 1
@@ -770,7 +785,7 @@ class singleUI(object):
             self.imageSelect.value = ["Original"]
             self.logger.debug("opts=%s", opts)
 
-        self.initImageBoxes()
+        # self.initImageBoxes()
         self.initCompImageView()
 
     def on_imageSelect_change(self, change):
@@ -796,7 +811,7 @@ class singleUI(object):
         self.logger.debug("b=%s", b)
         self.singleSelectedImages = list(self.imageSelect.value).copy()
         self.logger.debug("self.singleSelectedImages=%s", self.singleSelectedImages)
-        self.initImageBoxes()
+        # self.initImageBoxes()
         self.initCompImageView()
         # self.buttonApplyImgSelect.layout.visibility = 'hidden'
 
@@ -853,8 +868,8 @@ class singleUI(object):
                     flex_flow='row wrap',
                     display='flex')
         controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.select_num_to_display, self.imageWidth,
-                self.imageSelect, self.buttonApplyImgSelect], layout=box_layout)
-        output = widgets.VBox([controlW, self.initImageBoxes(), self.initComparisonView(), self.initDataFramePanel()])
+                self.imageSelect, self.displayOrientation, self.buttonApplyImgSelect], layout=box_layout)
+        output = widgets.VBox([controlW, self.initComparisonView(), self.initDataFramePanel()])
         self.baseW = output
         return(output)
 
