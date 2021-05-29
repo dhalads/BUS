@@ -223,6 +223,7 @@ class singleUI(object):
         self.compControls = None
         self.compImageView = None
         self.select_num_to_display = None
+        self.freezeList = []
 
     def setSegList(self, seglist):
         self.segList = seglist
@@ -457,7 +458,7 @@ class singleUI(object):
             for idxopt, opt in enumerate(opts):
                 gridarea = str(1) + "-" + str(idxopt + 3)
                 gridrow = str(idxopt + 2) + " / " + str(idxopt + 2)
-                imageNameLegend = widgets.Label(value=opt, layout=widgets.Layout(grid_area=gridarea, grid_column="1 / 1",grid_row=gridrow, textWrap="true"))
+                imageNameLegend = widgets.Label(value=opt, layout=widgets.Layout(grid_area=gridarea, grid_column="1 / 1",grid_row=gridrow, width = 'max-content'))
                 legendList.append(imageNameLegend)
             # legendVBox = widgets.VBox(legendList)
             # imagesWList.append(legendVBox)
@@ -479,13 +480,18 @@ class singleUI(object):
                 )
                 # VList.append(titleW)
                 gridarea = str(idximg + 2) + "-" + str(2)
+                if img.id in self.freezeList:
+                    freezeValue = True
+                else:
+                    freezeValue = False
                 freezeW = widgets.Checkbox(
-                            value=False,
-                            description='Freeze',
+                            value=freezeValue,
+                            description='Freeze -> ' + str(img.id),
                             disabled=False,
                             indent=False
                             # layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row="1 / 1")
                         )
+                freezeW.observe(self.on_freeze_change, names='value')
                 topgrid = widgets.HBox([titleW, freezeW], layout=widgets.Layout(grid_area=gridarea, grid_column=gridcolumn,grid_row="1 / 1"))
                 VList.append(topgrid)
                 for idxopt, opt in enumerate(opts):
@@ -511,7 +517,7 @@ class singleUI(object):
             gridWidth = len(opts)
             gridLength = len(images)
             gridlayout=widgets.Layout(width='100%',
-                                        grid_template_columns='5% auto auto auto auto auto',
+                                        grid_template_columns='max-content max-content max-content max-content amax-content max-content',
                                         grid_template_rows='auto auto auto auto auto auto auto',
                                         grid_gap='5px 5px',
                                         grid_template_areas='''
@@ -538,19 +544,22 @@ class singleUI(object):
         output = []
         try:
             idList = []
+            idList.extend(self.freezeList)
             numToDisplay = int(self.select_num_to_display.value)
-            idList.append(int(self.select_id.value))
             options = self.select_id.options
             size = len(options)
             idxList = [i for i, value in enumerate(self.select_id.options) if value == self.select_id.value]
             idx = idxList[0]
 
-            for i in range(0,numToDisplay-1):
-                if len(idList) < len(options) :
-                    idx = idx + 1
-                    if idx == size :
-                        idx = 0
-                    idList.append(int(options[idx]))
+            for i in range(0, len(options)):
+                if len(idList) >= numToDisplay:
+                    break
+                id = int(options[idx])
+                if not id in idList:
+                    idList.append(id)
+                idx = idx + 1
+                if idx == size :
+                    idx = 0
             self.logger.debug("idList=%s", idList)
             self.load(idList)
             for id in idList:
@@ -649,6 +658,24 @@ class singleUI(object):
         self.initImageBoxes()
         self.initCompImageView()
         # self.buttonApplyImgSelect.layout.visibility = 'hidden'
+
+    def on_freeze_change(self, change):
+        try:
+            self.logger.debug("change=%s", change)
+            owner = change['owner']
+            new_value = change['new']
+            id =  int(owner.description.split(">")[1].strip())
+            self.logger.debug("owner=%s", owner)
+            self.logger.debug("new_value=%s", new_value)
+            self.logger.debug("id=%s", id)
+            if new_value :
+                self.freezeList.append(id)
+            else:
+                self.freezeList.remove(id)
+            self.logger.debug("freezeList=%s", self.freezeList)
+        except:
+            self.logger.expection("")
+            raise
 
     def load(self, ids):
         if self.segList is None:

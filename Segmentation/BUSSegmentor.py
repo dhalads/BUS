@@ -62,8 +62,8 @@ class BUSSegmentor(object):
             path = Common.getImagePath() / "original" / filename
             image = Image.open(path).convert('L')
         self.PILimage= image
-        image_inv = ImageOps.invert(image)
-        bus = asarray(image_inv)
+        # image_inv = ImageOps.invert(image)
+        bus = asarray(image)
         self.image = bus
 
     def loadImageGT(self):
@@ -191,12 +191,19 @@ class BUSSegmentor(object):
         GTcnt = self.getGTContour()
         cv2.drawContours(tmpImg, GTcnt , -1, (0,255,0), 5)
         if addImages:
-            self.addImage("Gray Inverted with GT", tmpImg, None, None, None)
+            self.addImage("Original with GT", tmpImg, None, None, None)
         # Convert the grayscale image to binary
+        # image_inv = ImageOps.invert(self.PILimage)
+        # tmpImg = asarray(image_inv)
+        # if addImages:
+        #     self.addImage("Inverted Original 1", tmpImg, None, None, None)
+        tmpImg = cv2.bitwise_not(self.image.copy())
+        if addImages:
+            self.addImage("Inverted Original", tmpImg, None, None, None)
         mean = cv2.mean(tmpImg)
         mean = int(mean[0])
         mythres = 255 - (255-mean)*0.5
-        ret, binary = cv2.threshold(self.image, mythres, 255, 0)
+        ret, binary = cv2.threshold(tmpImg, mythres, 255, 0)
         if addImages:
             self.addImage("Binary", binary, None, None, None)
 
@@ -208,7 +215,7 @@ class BUSSegmentor(object):
         # Draw the contours (in red) on the original image and display the result
         # Input color code is in BGR (blue, green, red) format
         # -1 means to draw all contours
-        with_contours = cv2.drawContours(self.image.copy(), contours, -1,(0, 255, 0),1)
+        with_contours = cv2.drawContours(self.image.copy(), contours, -1,(255, 255, 255),1)
         if addImages:
             self.addImage("With Contours", with_contours, None, None, None)
 
@@ -223,7 +230,7 @@ class BUSSegmentor(object):
         shape1 = self.image.shape
         df2 = df1.loc[(df1['leftx'] > 30 ) & (df1['rightx'] < shape1[1] - 30) & (df1['topy'] > 30) & (df1['bottomy'] < shape1[0] - 30) & (df1['aspect_ratio'] < 5.5)]
         # df2.sort_values(by=['area'], ascending=False, inplace=True)
-        df2.sort_values(by=['mean_val'], ascending=False, inplace=True)
+        df2.sort_values(by=['mean_val'], ascending=True, inplace=True)
         self.logger.debug("\n" + str(df2[df2.columns.difference(["cnt"])]))
         tmpImg = self.image.copy()
         cntList = df2['cnt'].tolist()
@@ -231,7 +238,7 @@ class BUSSegmentor(object):
         if len(cntList) > 0 :
             bestCntId = df2['cnt_id'].tolist()[0]
             if addImages:
-                cv2.drawContours(tmpImg, cntList, 0, (0,255,0), 1)
+                cv2.drawContours(tmpImg, cntList, 0, (255,255,255), 1)
                 self.addImage("WithFilteredContours", tmpImg, None, None, None)
             bestCnt = cntList[0]
             bestStats = stats[bestCntId]
