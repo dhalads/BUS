@@ -181,7 +181,7 @@ class BUSSegmentor(object):
 
         return cnt_scaled
 
-    def findContours(self, addImages=False, addContourImages=False):
+    def findContours(self, addImages=False, addContourImages=True):
         # https://automaticaddison.com/how-to-detect-and-draw-contours-in-images-using-opencv/
         orig = asarray(self.PILimage)
         if addImages:

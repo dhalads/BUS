@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\djhalama\\anaconda3\\envs\\bus\\python.exe",
+    "python.pythonPath": "/home/djhalama/anaconda3/envs/bus/bin/python",
     "jupyter.jupyterServerType": "local"
 }

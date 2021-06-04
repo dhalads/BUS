@@ -32,6 +32,10 @@ import cv2
 # from ipydatagrid import DataGrid
 # from beakerx import *
 # from beakerx.object import beakerx
+# from google.colab import data_table
+# https://github.com/man-group/dtale#google-colab
+# import dtale
+# import dtale.app as dtale_app
 
 
 class ProcessImage(object):
@@ -149,22 +153,26 @@ class ProcessImage(object):
         display(HTML("<style>.container { width:100% !important; }</style>"))
 
         if "google.colab" in sys.modules:
-            from google.colab import drive
-            drive.mount('/content/gdrive')
-            os.chdir('/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home/Share_with_group/David_Halama/BUS')
-            sys.path.append('/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home/Share_with_group/David_Halama/BUS/Segmentation')
-            from Common import Common
-            Common.HomeProjectFolder = "/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home"
+            # from google.colab import drive
+            # drive.mount('/content/gdrive')
+            # os.chdir('/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home/Share_with_group/David_Halama/BUS')
+            # sys.path.append('/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home/Share_with_group/David_Halama/BUS/Segmentation')
+            # from Common import Common
+            # Common.HomeProjectFolder = "/content/gdrive/.shortcut-targets-by-id/1vMzK9J4qysmceXoMlEQPYZoLdu67Wu64/BUS Project Home"
             # print(os.getcwd())
             # !ls -la /content/gdrive/MyDrive
+            os.chdir('/home/djhalama/Documents/GitHub/BUS')
+            sys.path.append('/home/djhalama/Documents/GitHub/BUS/Segmentation')
+            from Common import Common
+            Common.HomeProjectFolder = "/mnt/c/Users/djhalama/Documents/Education/DS-785/BUS Project Home"
             with open('logging-config-colab.json', 'rt') as f:
                 config = json.load(f)
                 logging.config.dictConfig(config)
         else:
-            os.chdir('c:/Users/djhalama/Documents/GitHub/BUS')
-            sys.path.append('c:/Users/djhalama/Documents/GitHub/BUS/Segmentation')
+            os.chdir('/home/djhalama/Documents/GitHub/BUS')
+            sys.path.append('/home/djhalama/Documents/GitHub/BUS/Segmentation')
             from Common import Common
-            Common.HomeProjectFolder = "C:/Users/djhalama/Documents/Education/DS-785/BUS Project Home"
+            Common.HomeProjectFolder = "/mnt/c/Users/djhalama/Documents/Education/DS-785/BUS Project Home"
             with open('logging-config.json', 'rt') as f:
                 config = json.load(f)
                 logging.config.dictConfig(config)
@@ -205,6 +213,7 @@ class busUI(object):
         singleVBox = widgets.VBox(tmp)
         self.UI = singleVBox
         display(singleVBox)
+        # display(singleUIObj.qgrid1)
 
         singleUIObj.initObserve()
 
@@ -401,19 +410,45 @@ class singleUI(object):
     def initDataFramePanel(self):
         # https://hub.gke2.mybinder.org/user/quantopian-qgrid-notebooks-lln1r8wy/notebooks/index.ipynb
         try:
+            pd.set_option('display.max_rows', None)
+            pd.set_option('display.max_columns', None)
+            # pd.set_option('display.width', None)
+            # pd.set_option('display.max_colwidth', None)
             df = pd.read_csv('./data/dataScored.csv', header=0)
             # qgrid_widget = qgrid.show_grid(df, show_toolbar=False)
             # qgrid_widget.layout = widgets.Layout(width='100%')
-            box_layout = widgets.Layout(overflow='scroll hidden',
+            box_layout = widgets.Layout(overflow='scroll',
                     border='3px solid black',
                     width='100%',
-                    height='',
+                    height='300px',
                     flex_flow='row nowrap',
                     display='flex')
             # datagrid = DataGrid(df, base_row_size=32, base_column_size=150)
             # datagrid = DataGrid(df, selection_mode="cell", editable=True)
-            # datagrid = DataGrid(df, layout={"height":"200px"})
-            self.qgrid1 = widgets.HBox([], layout=box_layout)
+            # datagrid = data_table.DataTable(df, include_index=False, num_rows_per_page=10)
+            # https://queirozf.com/entries/pandas-query-examples-sql-like-syntax-queries-in-dataframes
+            # queryString = "`BI-RADS`=='3' and Quality==1"
+            # 'age == @target_age'
+            self.logger.debug(df.columns)
+            # df.query(queryString, inplace=True)
+            df.sort_values(by=['id', 'Biopsy'], inplace=True, ascending=[False, False])
+    #         columnList = ['Unnamed: 0', 'Sample name', 'Peripheral ZoneACR', 'Peripheral ZoneTS',
+    #    'Marginal ZoneACR', 'Boundary ZoneACR', 'MarginalBoundary ZoneTS',
+    #    'ShapeACR ', 'ShapeTS', 'Orientation', 'Echo PatternACR',
+    #    'Echo PatternTS', 'Posterior FeaturesACR', 'Posterior FeaturesTS',
+    #    'VascularityACR', 'Size', 'Histology', 'Lesion Type', 'BI-RADS',
+    #    'Quality', 'id', 'Biopsy']
+
+            columnList = ['id', 'Peripheral ZoneTS',
+            'MarginalBoundary ZoneTS',
+            'ShapeTS', 'Orientation',
+            'Echo PatternTS', 'Posterior FeaturesTS',
+            'VascularityACR', 'Size', 'Histology', 'Lesion Type', 'BI-RADS',
+            'Quality', 'Biopsy']
+            df = df[columnList]
+            self.qgrid1 = widgets.Output(layout=box_layout)
+            self.qgrid1.append_display_data(df)
+            # self.qgrid1 = datagrid
             return(self.qgrid1)
         except:
             self.logger.exception("")
@@ -870,8 +905,23 @@ class singleUI(object):
         controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.select_num_to_display, self.imageWidth,
                 self.imageSelect, self.displayOrientation, self.buttonApplyImgSelect], layout=box_layout)
         output = widgets.VBox([controlW, self.initComparisonView(), self.initDataFramePanel()])
+        
         self.baseW = output
         return(output)
+
+class BUSDataTable(object):
+
+    def __init__(self):
+        self.source = None
+        self.queryString = None
+        self.sortList = None
+        self.sortAscendingList = None
+        self.columnList = None
+        self.isFollowImageList = False
+        self.isFollowSingle = False
+
+
+
 
 
 

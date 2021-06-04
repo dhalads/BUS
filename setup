@@ -19,9 +19,14 @@ conda install -c conda-forge jupyter_contrib_nbextensions
 # Start jupyter notebook
 # jupyter notebook
 
-conda create –name bus python=3.6
+conda create –-name bus python=3.6
 conda activate bus
 conda install numpy matplotlib scipy scikit-image opencv pycaret ipywidgets ipydatagrid pandas Pillow
+
+conda install numpy matplotlib scipy scikit-image opencv ipywidgets pandas Pillow
+# https://web.cecs.pdx.edu/~fliu/courses/cs410/python-opencv.html
+pip install opencv-python==3.4.2.17
+pip install opencv-contrib-python==con3.4.2.17
 
 
 # Cannot find cv2

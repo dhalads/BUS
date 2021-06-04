@@ -1,8 +1,6 @@
 # To add a new cell, type '# %%'
 # To add a new markdown cell, type '# %% [markdown]'
 # %%
-%load_ext autoreload
-%autoreload 2
 
 from IPython.core.display import display, HTML
 display(HTML("<style>.container { width:100% !important; }</style>"))
@@ -31,3 +29,5 @@ run()
 
 
 
+
+# %%
