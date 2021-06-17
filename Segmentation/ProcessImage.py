@@ -245,6 +245,9 @@ class singleUI(object):
         self.freezeList = []
         self.displayOrientation = None
 
+        self.gridWidgets = {}
+        self.gridList = []
+
     def setSegList(self, seglist):
         self.segList = seglist
         # id = seg.id
@@ -341,6 +344,110 @@ class singleUI(object):
 
         )
         # self.buttonApplyImgSelect.layout.visibility = 'hidden'
+
+    def initGridUI(self):
+        try:
+            tableOpts = ['data/dataScored.csv']
+            source = widgets.Dropdown(
+                    options=tableOpts,
+                    value=tableOpts[0],
+                    description='available tables:',
+                    disabled=False
+                )
+
+            self.gridWidgets["grid.source"] = source
+
+            buttonSourceAdd = widgets.Button(
+                    description='Add',
+                    disabled=False,
+                    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+                    tooltip='Click me',
+                    icon='check' # (FontAwesome names without the `fa-` prefix)
+                )
+
+            self.gridWidgets["grid.buttonSourceAdd"] = buttonSourceAdd
+
+            sourceBox = widgets.HBox([source, buttonSourceAdd])
+
+            loaded = widgets.Dropdown(
+                    options=self.gridList,
+                    value=None,
+                    description='available tables:',
+                    disabled=False
+                )
+            
+            self.gridWidgets["grid.loaded"] = loaded
+
+            buttonLoadedUpdate = widgets.Button(
+                    description='Update',
+                    disabled=False,
+                    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+                    tooltip='Click me',
+                    icon='check' # (FontAwesome names without the `fa-` prefix)
+                )
+
+            self.gridWidgets["grid.buttonLoadedUpdate"] = buttonLoadedUpdate
+
+            tableBox = widgets.HBox([loaded, buttonLoadedUpdate])
+
+            
+            queryString = widgets.Text(
+                value='',
+                placeholder='Type something',
+                description='Query String:',
+                disabled=False,
+                layout=widgets.Layout(width='100%')
+            )
+
+            self.gridWidgets["grid.queryString"] = queryString
+
+            sortList = widgets.Text(
+                value='',
+                placeholder='Type something',
+                description='Sort List:',
+                disabled=False,
+                layout=widgets.Layout(width='100%')
+            )
+
+            self.gridWidgets["grid.sortList"] = sortList
+
+            sortAssendingList = widgets.Text(
+                value='',
+                placeholder='Type something',
+                description='Sort Assending List:',
+                disabled=False,
+                layout=widgets.Layout(width='100%')
+            )
+
+            self.gridWidgets["grid.sortAssendingList"] = sortAssendingList
+
+            columnList = widgets.Text(
+                value='',
+                placeholder='Type something',
+                description='Column List:',
+                disabled=False,
+                layout=widgets.Layout(width='100%')
+            )
+
+            self.gridWidgets["grid.columnList"] = columnList
+
+            box_layout = widgets.Layout(overflow='scroll hidden',
+                    border='3px solid black',
+                    width='100%',
+                    height='',
+                    flex_flow='column',
+                    display='flex')
+
+
+            self.gridWidgets["grid.buttonSourceAdd"].on_click(self.on_grid_add_clicked)
+            self.gridWidgets["grid.buttonLoadedUpdate"].on_click(self.on_grid_update_clicked)
+
+            output = widgets.VBox([sourceBox, tableBox, queryString, sortList, sortAssendingList, columnList], layout=box_layout)
+
+        except:
+            self.logger.exception("")
+            raise
+        return output
 
     def initImageBoxes(self):
         imagesH = None
@@ -868,6 +975,40 @@ class singleUI(object):
             self.logger.expection("")
             raise
 
+    def on_grid_add_clicked(self, b):
+        try:
+            self.logger.debug("b=%s", b)
+            source = self.gridWidgets["grid.source"].value
+            busDT = BUSDataTable()
+            busDT.name = 'New'
+            busDT.source = source
+            busDT.queryString = ''
+            busDT.sortList = []
+            busDT.sortAscendingList = []
+            busDT.columnList = []
+            self.gridList.append(busDT)
+        except:
+            self.logger.expection("")
+            raise
+
+    def on_grid_update_clicked(self, b):
+        try:
+            self.logger.debug("change=%s", change)
+            owner = change['owner']
+            new_value = change['new']
+            id =  int(owner.description.split(">")[1].strip())
+            self.logger.debug("owner=%s", owner)
+            self.logger.debug("new_value=%s", new_value)
+            self.logger.debug("id=%s", id)
+            if new_value :
+                self.freezeList.append(id)
+            else:
+                self.freezeList.remove(id)
+            self.logger.debug("freezeList=%s", self.freezeList)
+        except:
+            self.logger.expection("")
+            raise
+
     def load(self, ids):
         if self.segList is None:
             self.segList = BUSSegmentorList()
@@ -904,21 +1045,12 @@ class singleUI(object):
                     display='flex')
         controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.select_num_to_display, self.imageWidth,
                 self.imageSelect, self.displayOrientation, self.buttonApplyImgSelect], layout=box_layout)
-        output = widgets.VBox([controlW, self.initComparisonView(), self.initDataFramePanel()])
+        output = widgets.VBox([self.initGridUI(), controlW, self.initComparisonView(), self.initDataFramePanel()])
         
         self.baseW = output
         return(output)
 
-class BUSDataTable(object):
 
-    def __init__(self):
-        self.source = None
-        self.queryString = None
-        self.sortList = None
-        self.sortAscendingList = None
-        self.columnList = None
-        self.isFollowImageList = False
-        self.isFollowSingle = False
 
 
 
