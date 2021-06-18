@@ -17,6 +17,7 @@ from matplotlib import cm
 import cv2
 from BUSSegmentor import BUSSegmentor
 from BUSSegmentorList import BUSSegmentorList
+from BUSDataTable import BUSDataTable
 # for reading files from urls
 import urllib.request
 # display imports
@@ -29,6 +30,8 @@ import pandas as pd
 from io import StringIO
 import io
 import cv2
+import fnmatch
+import os
 # from ipydatagrid import DataGrid
 # from beakerx import *
 # from beakerx.object import beakerx
@@ -347,10 +350,10 @@ class singleUI(object):
 
     def initGridUI(self):
         try:
-            tableOpts = ['data/dataScored.csv']
+            tableOpts = self.getSourceList()
             source = widgets.Dropdown(
                     options=tableOpts,
-                    value=tableOpts[0],
+                    value=None,
                     description='available tables:',
                     disabled=False
                 )
@@ -367,16 +370,27 @@ class singleUI(object):
 
             self.gridWidgets["grid.buttonSourceAdd"] = buttonSourceAdd
 
-            sourceBox = widgets.HBox([source, buttonSourceAdd])
+            message = widgets.Text(
+                value='',
+                placeholder='Type something',
+                description='Message:',
+                disabled=False,
+                layout=widgets.Layout(width='100%')
+            )
+
+            self.gridWidgets["grid.message"] = message
+
+            sourceBox = widgets.HBox([source, buttonSourceAdd, message])
 
             loaded = widgets.Dropdown(
-                    options=self.gridList,
+                    options=[],
                     value=None,
                     description='available tables:',
                     disabled=False
                 )
             
             self.gridWidgets["grid.loaded"] = loaded
+            self.setGridLoaded(None)
 
             buttonLoadedUpdate = widgets.Button(
                     description='Update',
@@ -390,6 +404,25 @@ class singleUI(object):
 
             tableBox = widgets.HBox([loaded, buttonLoadedUpdate])
 
+            name = widgets.Text(
+                value='',
+                placeholder='Type something',
+                description='name:',
+                disabled=False,
+                layout=widgets.Layout(width='100%')
+            )
+
+            self.gridWidgets["grid.name"] = name
+
+            sourceText = widgets.Text(
+                value='',
+                placeholder='Type something',
+                description='source:',
+                disabled=False,
+                layout=widgets.Layout(width='100%')
+            )
+
+            self.gridWidgets["grid.sourceText"] = sourceText
             
             queryString = widgets.Text(
                 value='',
@@ -419,7 +452,7 @@ class singleUI(object):
                 layout=widgets.Layout(width='100%')
             )
 
-            self.gridWidgets["grid.sortAssendingList"] = sortAssendingList
+            self.gridWidgets["grid.sortAscendingList"] = sortAssendingList
 
             columnList = widgets.Text(
                 value='',
@@ -441,8 +474,10 @@ class singleUI(object):
 
             self.gridWidgets["grid.buttonSourceAdd"].on_click(self.on_grid_add_clicked)
             self.gridWidgets["grid.buttonLoadedUpdate"].on_click(self.on_grid_update_clicked)
+            self.gridWidgets["grid.loaded"].observe(self.on_grid_loaded_change, names='value')
+            
 
-            output = widgets.VBox([sourceBox, tableBox, queryString, sortList, sortAssendingList, columnList], layout=box_layout)
+            output = widgets.VBox([sourceBox, tableBox, name, sourceText, queryString, sortList, sortAssendingList, columnList], layout=box_layout)
 
         except:
             self.logger.exception("")
@@ -972,7 +1007,7 @@ class singleUI(object):
                 self.freezeList.remove(id)
             self.logger.debug("freezeList=%s", self.freezeList)
         except:
-            self.logger.expection("")
+            self.logger.exception("")
             raise
 
     def on_grid_add_clicked(self, b):
@@ -980,33 +1015,74 @@ class singleUI(object):
             self.logger.debug("b=%s", b)
             source = self.gridWidgets["grid.source"].value
             busDT = BUSDataTable()
-            busDT.name = 'New'
+            if source.endswith(".csv") :
+                busDT.name = 'New'
+            else:
+                busDT.name = source
             busDT.source = source
             busDT.queryString = ''
             busDT.sortList = []
             busDT.sortAscendingList = []
             busDT.columnList = []
+            self.logger.debug("busDT=%s", str(busDT))
             self.gridList.append(busDT)
+            self.logger.debug("gridList=%s", str(self.gridList))
+            self.setGridLoaded(busDT.name)
         except:
-            self.logger.expection("")
+            self.logger.exception("")
             raise
 
     def on_grid_update_clicked(self, b):
         try:
+            self.logger.debug("b=%s", b)
+            self.gridWidgets['grid.message'].value = ''
+            name = self.gridWidgets["grid.loaded"].value
+            busDT = [x for x in self.gridList if x.name == name][0]
+            newDT = BUSDataTable()
+            newDT.name = self.gridWidgets["grid.name"].value
+            newDT.source = busDT.source
+            newDT.queryString = self.gridWidgets["grid.queryString"].value
+            newDT.sortList = json.loads(self.gridWidgets["grid.sortList"].value)
+            newDT.sortAscendingList = json.loads(self.gridWidgets["grid.sortAscendingList"].value)
+            newDT.columnList = json.loads(self.gridWidgets["grid.columnList"].value)
+            self.logger.debug("newDT=%s", str(newDT))
+            # if newDT.name == busDT.name :
+            raise Exception("help me")
+
+        except Exception as e:
+            self.logger.exception("")
+            try:
+                self.gridWidgets['grid.message'].value = 'Failed:'
+            except:
+                self.logger.exception("")
+                raise
+
+    def setGridLoaded(self, value):
+        try:
+            sourceWidget = self.gridWidgets["grid.loaded"]
+            options = [x.name for x in self.gridList]
+            sourceWidget.options = options
+            sourceWidget.value = value
+            self.logger.debug("options=%s", str(options))
+        except:
+            self.logger.exception("")
+            raise
+    
+    def on_grid_loaded_change(self, change):
+        try:
             self.logger.debug("change=%s", change)
             owner = change['owner']
             new_value = change['new']
-            id =  int(owner.description.split(">")[1].strip())
-            self.logger.debug("owner=%s", owner)
-            self.logger.debug("new_value=%s", new_value)
-            self.logger.debug("id=%s", id)
-            if new_value :
-                self.freezeList.append(id)
-            else:
-                self.freezeList.remove(id)
-            self.logger.debug("freezeList=%s", self.freezeList)
+            busDT = [x for x in self.gridList if x.name == new_value][0]
+            self.gridWidgets["grid.name"].value = busDT.name
+            self.gridWidgets["grid.sourceText"].value = busDT.source
+            self.gridWidgets["grid.queryString"].value = busDT.queryString
+            self.gridWidgets["grid.sortList"].value = str(busDT.sortList)
+            self.gridWidgets["grid.sortAscendingList"].value = str(busDT.sortAscendingList)
+            self.gridWidgets["grid.columnList"].value = str(busDT.columnList)
+            self.logger.debug("busDT=%s", str(busDT))
         except:
-            self.logger.expection("")
+            self.logger.exception("busDT=%s", str(busDT))
             raise
 
     def load(self, ids):
@@ -1035,6 +1111,19 @@ class singleUI(object):
         except:
             success = False
         return((success, message,  idList))
+
+    def getSourceList(self):
+        sourceList = None
+        try:
+            dirname = "data"
+            pattern = "*.json"
+            sourceList = fnmatch.filter(os.listdir(dirname), pattern)
+            pattern = "*.csv"
+            sourceList.extend(fnmatch.filter(os.listdir(dirname), pattern))
+        except:
+            self.logger.exception("")
+            raise
+        return sourceList
 
     def getOutput(self):
         box_layout = widgets.Layout(overflow='scroll hidden',

@@ -17,15 +17,19 @@ class BUSDataTable(object):
         self.isFollowImageList = False
         self.isFollowSingle = False
 
+    def __str__(self):
+        return str(self.__dict__)
+
     def save(self):
         try:
             filename = 'data/' + self.name + '.json'
             # https://www.geeksforgeeks.org/encoding-and-decoding-custom-objects-in-python-json/
-            output = json.dumps(self, indent = 4, default=lambda o: o.__dict__)
+            json_object = json.dumps(self, indent = 4, default=lambda o: o.__dict__)
             with open(filename, "w") as outfile:
                 outfile.write(json_object)
         except:
-            pass
+            self.logger.exception("")
+            raise
 
     def load(self):
         try:
@@ -34,12 +38,20 @@ class BUSDataTable(object):
             with open(filename, 'r') as openfile:
                 # Reading from json file
                 json_object = json.load(openfile)
+            self.source = json_object.get('source')
+            self.queryString = json_object.get('queryString')
+            self.sortList = json_object.get('sortList')
+            self.sortAscendingList = json_object.get('sortAscendingList')
+            self.columnList = json_object.get('columnList')
+            self.isFollowImageList = False
+            self.isFollowSingle = False
         except:
             self.logger.exception("")
             raise
 
     def createDF(self):
         try:
-
+            pass
         except:
+            pass
 

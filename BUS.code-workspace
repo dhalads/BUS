@@ -5,6 +5,8 @@
 		}
 	],
 	"settings": {
-		"pythonTestExplorer.testFramework": "unittest"
+		"pythonTestExplorer.testFramework": "unittest",
+		"python.testing.unittestEnabled": true,
+		"python.globalModuleInstallation": true
 	}
 }
