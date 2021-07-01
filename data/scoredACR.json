@@ -1,0 +1,31 @@
+{
+    "source": "data/dataScored.csv",
+    "queryString": "`BI-RADS`!='7' and Quality!=7",
+    "sortList": [
+        "id",
+        "Biopsy"
+    ],
+    "sortAscendingList": [
+        "True",
+        "True"
+    ],
+    "columnList": [
+        "id",
+        "Peripheral ZoneACR",
+        "Marginal ZoneACR",
+        "Boundary ZoneACR",
+        "ShapeACR",
+        "Orientation",
+        "Echo PatternACR",
+        "Posterior FeaturesACR",
+        "VascularityACR",
+        "Size",
+        "Histology",
+        "Lesion Type",
+        "BI-RADS",
+        "Quality",
+        "Biopsy"
+    ],
+    "isFollowImageList": false,
+    "isFollowSingle": false
+}
