@@ -32,6 +32,7 @@ import io
 import cv2
 import fnmatch
 import os
+import ast
 # from ipydatagrid import DataGrid
 # from beakerx import *
 # from beakerx.object import beakerx
@@ -240,7 +241,7 @@ class singleUI(object):
         self.imageWDisplay = None
         self.buttonApplyImgSelect = None
         self.singleSelectedImages = None
-        self.qgrid1 = None
+        self.gridPanel = None
         self.compView = None
         self.compControls = None
         self.compImageView = None
@@ -402,7 +403,17 @@ class singleUI(object):
 
             self.gridWidgets["grid.buttonLoadedUpdate"] = buttonLoadedUpdate
 
-            tableBox = widgets.HBox([loaded, buttonLoadedUpdate])
+            buttonLoadedLoad = widgets.Button(
+                    description='Load',
+                    disabled=False,
+                    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+                    tooltip='Click me',
+                    icon='check' # (FontAwesome names without the `fa-` prefix)
+                )
+
+            self.gridWidgets["grid.buttonLoadedLoad"] = buttonLoadedLoad
+
+            tableBox = widgets.HBox([loaded, buttonLoadedUpdate, buttonLoadedLoad])
 
             name = widgets.Text(
                 value='',
@@ -474,6 +485,7 @@ class singleUI(object):
 
             self.gridWidgets["grid.buttonSourceAdd"].on_click(self.on_grid_add_clicked)
             self.gridWidgets["grid.buttonLoadedUpdate"].on_click(self.on_grid_update_clicked)
+            self.gridWidgets["grid.buttonLoadedLoad"].on_click(self.on_grid_load_clicked)
             self.gridWidgets["grid.loaded"].observe(self.on_grid_loaded_change, names='value')
             
 
@@ -556,42 +568,37 @@ class singleUI(object):
             pd.set_option('display.max_columns', None)
             # pd.set_option('display.width', None)
             # pd.set_option('display.max_colwidth', None)
-            df = pd.read_csv('./data/dataScored.csv', header=0)
-            # qgrid_widget = qgrid.show_grid(df, show_toolbar=False)
-            # qgrid_widget.layout = widgets.Layout(width='100%')
-            box_layout = widgets.Layout(overflow='scroll',
-                    border='3px solid black',
-                    width='100%',
-                    height='300px',
-                    flex_flow='row nowrap',
-                    display='flex')
-            # datagrid = DataGrid(df, base_row_size=32, base_column_size=150)
-            # datagrid = DataGrid(df, selection_mode="cell", editable=True)
-            # datagrid = data_table.DataTable(df, include_index=False, num_rows_per_page=10)
-            # https://queirozf.com/entries/pandas-query-examples-sql-like-syntax-queries-in-dataframes
-            # queryString = "`BI-RADS`=='3' and Quality==1"
-            # 'age == @target_age'
-            self.logger.debug(df.columns)
-            # df.query(queryString, inplace=True)
-            df.sort_values(by=['id', 'Biopsy'], inplace=True, ascending=[False, False])
-    #         columnList = ['Unnamed: 0', 'Sample name', 'Peripheral ZoneACR', 'Peripheral ZoneTS',
-    #    'Marginal ZoneACR', 'Boundary ZoneACR', 'MarginalBoundary ZoneTS',
-    #    'ShapeACR ', 'ShapeTS', 'Orientation', 'Echo PatternACR',
-    #    'Echo PatternTS', 'Posterior FeaturesACR', 'Posterior FeaturesTS',
-    #    'VascularityACR', 'Size', 'Histology', 'Lesion Type', 'BI-RADS',
-    #    'Quality', 'id', 'Biopsy']
 
-            columnList = ['id', 'Peripheral ZoneTS',
-            'MarginalBoundary ZoneTS',
-            'ShapeTS', 'Orientation',
-            'Echo PatternTS', 'Posterior FeaturesTS',
-            'VascularityACR', 'Size', 'Histology', 'Lesion Type', 'BI-RADS',
-            'Quality', 'Biopsy']
-            df = df[columnList]
-            self.qgrid1 = widgets.Output(layout=box_layout)
-            self.qgrid1.append_display_data(df)
-            # self.qgrid1 = datagrid
-            return(self.qgrid1)
+            box_layout = widgets.Layout(overflow='scroll',
+                    # border='3px solid black',
+                    width='100%',
+                    # height='300px',
+                    # flex_flow='row nowrap',
+                    display='flex')
+
+            self.gridPanel = widgets.VBox([], layout=box_layout)
+            return(self.gridPanel)
+        except:
+            self.logger.exception("")
+            raise
+
+    def initGridListPanel(self):
+        # https://hub.gke2.mybinder.org/user/quantopian-qgrid-notebooks-lln1r8wy/notebooks/index.ipynb
+        try:
+            pd.set_option('display.max_rows', None)
+            pd.set_option('display.max_columns', None)
+            # pd.set_option('display.width', None)
+            # pd.set_option('display.max_colwidth', None)
+            # box_layout = widgets.Layout(overflow='scroll',
+            #         # border='3px solid black',
+            #         width='100%',
+            #         height='300px',
+            #         flex_flow='row nowrap',
+            #         display='flex')
+            wList = []
+            for grid in self.gridList:
+                wList.append(grid.get_panel())
+            self.gridPanel.children = wList
         except:
             self.logger.exception("")
             raise
@@ -1016,18 +1023,23 @@ class singleUI(object):
             source = self.gridWidgets["grid.source"].value
             busDT = BUSDataTable()
             if source.endswith(".csv") :
-                busDT.name = 'New'
+                busDT.name = 'New.json'
+                busDT.source = source
+                busDT.queryString = ''
+                busDT.sortList = []
+                busDT.sortAscendingList = []
+                busDT.columnList = []
             else:
                 busDT.name = source
-            busDT.source = source
-            busDT.queryString = ''
-            busDT.sortList = []
-            busDT.sortAscendingList = []
-            busDT.columnList = []
+                busDT.load()
+
             self.logger.debug("busDT=%s", str(busDT))
             self.gridList.append(busDT)
+            idx = len(self.gridList) - 1
             self.logger.debug("gridList=%s", str(self.gridList))
-            self.setGridLoaded(busDT.name)
+            self.setGridLoaded(idx)
+            busDT.init_df()
+            self.initGridListPanel()
         except:
             self.logger.exception("")
             raise
@@ -1042,12 +1054,11 @@ class singleUI(object):
             newDT.name = self.gridWidgets["grid.name"].value
             newDT.source = busDT.source
             newDT.queryString = self.gridWidgets["grid.queryString"].value
-            newDT.sortList = json.loads(self.gridWidgets["grid.sortList"].value)
-            newDT.sortAscendingList = json.loads(self.gridWidgets["grid.sortAscendingList"].value)
-            newDT.columnList = json.loads(self.gridWidgets["grid.columnList"].value)
+            newDT.sortList = ast.literal_eval(self.gridWidgets["grid.sortList"].value)
+            newDT.sortAscendingList = ast.literal_eval(self.gridWidgets["grid.sortAscendingList"].value)
+            newDT.columnList = ast.literal_eval(self.gridWidgets["grid.columnList"].value)
             self.logger.debug("newDT=%s", str(newDT))
             # if newDT.name == busDT.name :
-            raise Exception("help me")
 
         except Exception as e:
             self.logger.exception("")
@@ -1057,10 +1068,25 @@ class singleUI(object):
                 self.logger.exception("")
                 raise
 
+    def on_grid_load_clicked(self, b):
+        try:
+            self.logger.debug("b=%s", b)
+            self.gridWidgets['grid.message'].value = ''
+            value = self.gridWidgets["grid.loaded"].value
+            busDT = self.gridList[value]
+            idList = busDT.get_id_list()
+            x = ",".join(map(str, idList))
+            self.logger.debug("x=%s", str(x))
+            self.idWList.value =x
+
+        except Exception as e:
+            self.logger.exception("")
+            raise
+
     def setGridLoaded(self, value):
         try:
             sourceWidget = self.gridWidgets["grid.loaded"]
-            options = [x.name for x in self.gridList]
+            options = [(val.name, i) for i, val in enumerate(self.gridList)]
             sourceWidget.options = options
             sourceWidget.value = value
             self.logger.debug("options=%s", str(options))
@@ -1073,7 +1099,7 @@ class singleUI(object):
             self.logger.debug("change=%s", change)
             owner = change['owner']
             new_value = change['new']
-            busDT = [x for x in self.gridList if x.name == new_value][0]
+            busDT = self.gridList[new_value]
             self.gridWidgets["grid.name"].value = busDT.name
             self.gridWidgets["grid.sourceText"].value = busDT.source
             self.gridWidgets["grid.queryString"].value = busDT.queryString
