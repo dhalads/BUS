@@ -627,8 +627,15 @@ class singleUI(object):
             #         flex_flow='row nowrap',
             #         display='flex')
             wList = []
+            value = self.select_id.value
+            if value is not None:
+                id = int(value)
+                idList = [x.id for x in self.getCompImageList()]
+            else:
+                id = None
+                idList = None
             for grid in self.gridList:
-                wList.append(grid.get_panel())
+                wList.append(grid.get_panel(id, idList))
             self.gridPanel.children = wList
         except:
             self.logger.exception("")
@@ -1002,6 +1009,7 @@ class singleUI(object):
 
         # self.initImageBoxes()
         self.initCompImageView()
+        self.initGridListPanel()
 
     def on_imageSelect_change(self, change):
         self.logger.debug(change)
@@ -1028,6 +1036,7 @@ class singleUI(object):
         self.logger.debug("self.singleSelectedImages=%s", self.singleSelectedImages)
         # self.initImageBoxes()
         self.initCompImageView()
+        self.initGridListPanel()
         # self.buttonApplyImgSelect.layout.visibility = 'hidden'
 
     def on_freeze_change(self, change):
@@ -1120,6 +1129,7 @@ class singleUI(object):
             x = ",".join(map(str, idList))
             self.logger.debug("x=%s", str(x))
             self.idWList.value =x
+            self.on_load_clicked(b)
 
         except Exception as e:
             self.logger.exception("")
@@ -1130,7 +1140,14 @@ class singleUI(object):
             self.logger.debug("b=%s", b)
             self.gridWidgets['grid.message'].value = ''
             value = self.gridWidgets["grid.loaded"].value
+            success = self.on_grid_update_clicked(b)
             busDT = self.gridList[value]
+            if success:
+                busDT.save()
+                self.gridWidgets['grid.message'].value = 'Success:Save'
+            else:
+                # self.gridWidgets['grid.message'].value = 'Failed:'
+                pass
 
         except Exception as e:
             self.logger.exception("")
@@ -1141,7 +1158,11 @@ class singleUI(object):
             self.logger.debug("b=%s", b)
             self.gridWidgets['grid.message'].value = ''
             value = self.gridWidgets["grid.loaded"].value
-            busDT = self.gridList[value]
+            if value is not None:
+                busDT = self.gridList[value]
+                del self.gridList[value]
+                self.setGridLoaded(None)
+                self.initGridListPanel()
 
         except Exception as e:
             self.logger.exception("")
@@ -1163,14 +1184,26 @@ class singleUI(object):
             self.logger.debug("change=%s", change)
             owner = change['owner']
             new_value = change['new']
-            busDT = self.gridList[new_value]
-            self.gridWidgets["grid.name"].value = busDT.name
-            self.gridWidgets["grid.sourceText"].value = busDT.source
-            self.gridWidgets["grid.queryString"].value = busDT.queryString
-            self.gridWidgets["grid.sortList"].value = str(busDT.sortList)
-            self.gridWidgets["grid.sortAscendingList"].value = str(busDT.sortAscendingList)
-            self.gridWidgets["grid.columnList"].value = str(busDT.columnList)
-            self.logger.debug("busDT=%s", str(busDT))
+            if new_value is not None:
+                busDT = self.gridList[new_value]
+                self.gridWidgets["grid.name"].value = busDT.name
+                self.gridWidgets["grid.sourceText"].value = busDT.source
+                self.gridWidgets["grid.queryString"].value = busDT.queryString
+                self.gridWidgets["grid.sortList"].value = str(busDT.sortList)
+                self.gridWidgets["grid.sortAscendingList"].value = str(busDT.sortAscendingList)
+                self.gridWidgets["grid.columnList"].value = str(busDT.columnList)
+                self.gridWidgets["grid.selectFollow"].value = str(busDT.selectFollow)
+                self.logger.debug("busDT=%s", str(busDT))
+            else:
+                self.gridWidgets["grid.name"].value = ""
+                self.gridWidgets["grid.sourceText"].value = ""
+                self.gridWidgets["grid.queryString"].value = ""
+                self.gridWidgets["grid.sortList"].value = str([])
+                self.gridWidgets["grid.sortAscendingList"].value = str([])
+                self.gridWidgets["grid.columnList"].value = str([])
+                self.gridWidgets["grid.selectFollow"].value = 'None'
+                self.logger.debug("busDT=%s", str(busDT))
+
         except:
             self.logger.exception("busDT=%s", str(busDT))
             raise
@@ -1208,8 +1241,9 @@ class singleUI(object):
             dirname = "data"
             pattern = "*.json"
             sourceList = fnmatch.filter(os.listdir(dirname), pattern)
-            pattern = "*.csv"
-            sourceList.extend(fnmatch.filter(os.listdir(dirname), pattern))
+            # pattern = "*.csv"
+            # sourceList.extend(fnmatch.filter(os.listdir(dirname), pattern))
+            sourceList.sort()
         except:
             self.logger.exception("")
             raise
