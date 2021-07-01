@@ -282,8 +282,8 @@ class singleUI(object):
         )
         
         self.select_id = widgets.Dropdown(
-            options=['None'],
-            value='None',
+            options=[],
+            value=None,
             description='Number:',
             disabled=False,
         )
@@ -355,7 +355,7 @@ class singleUI(object):
             source = widgets.Dropdown(
                     options=tableOpts,
                     value=None,
-                    description='available tables:',
+                    description='available:',
                     disabled=False
                 )
 
@@ -386,12 +386,21 @@ class singleUI(object):
             loaded = widgets.Dropdown(
                     options=[],
                     value=None,
-                    description='available tables:',
+                    description='loaded:',
                     disabled=False
                 )
             
             self.gridWidgets["grid.loaded"] = loaded
             self.setGridLoaded(None)
+
+            selectFollow = widgets.Dropdown(
+                    options=['None', 'ImageList', 'Single'],
+                    value=None,
+                    description='follow:',
+                    disabled=False
+                )
+            
+            self.gridWidgets["grid.selectFollow"] = selectFollow
 
             buttonLoadedUpdate = widgets.Button(
                     description='Update',
@@ -413,7 +422,27 @@ class singleUI(object):
 
             self.gridWidgets["grid.buttonLoadedLoad"] = buttonLoadedLoad
 
-            tableBox = widgets.HBox([loaded, buttonLoadedUpdate, buttonLoadedLoad])
+            buttonLoadedSave = widgets.Button(
+                    description='Save',
+                    disabled=False,
+                    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+                    tooltip='Click me',
+                    icon='check' # (FontAwesome names without the `fa-` prefix)
+                )
+
+            self.gridWidgets["grid.buttonLoadedSave"] = buttonLoadedSave
+
+            buttonLoadedRemove = widgets.Button(
+                    description='Remove',
+                    disabled=False,
+                    button_style='', # 'success', 'info', 'warning', 'danger' or ''
+                    tooltip='Click me',
+                    icon='check' # (FontAwesome names without the `fa-` prefix)
+                )
+
+            self.gridWidgets["grid.buttonLoadedRemove"] = buttonLoadedRemove
+
+            tableBox = widgets.HBox([loaded, selectFollow, buttonLoadedUpdate, buttonLoadedLoad, buttonLoadedSave ,buttonLoadedRemove])
 
             name = widgets.Text(
                 value='',
@@ -486,6 +515,8 @@ class singleUI(object):
             self.gridWidgets["grid.buttonSourceAdd"].on_click(self.on_grid_add_clicked)
             self.gridWidgets["grid.buttonLoadedUpdate"].on_click(self.on_grid_update_clicked)
             self.gridWidgets["grid.buttonLoadedLoad"].on_click(self.on_grid_load_clicked)
+            self.gridWidgets["grid.buttonLoadedSave"].on_click(self.on_grid_save_clicked)
+            self.gridWidgets["grid.buttonLoadedRemove"].on_click(self.on_grid_remove_clicked)
             self.gridWidgets["grid.loaded"].observe(self.on_grid_loaded_change, names='value')
             
 
@@ -1031,7 +1062,10 @@ class singleUI(object):
                 busDT.columnList = []
             else:
                 busDT.name = source
+                busDT.selectFollow = 'None'
                 busDT.load()
+
+                # ",".join(map(str, idList))
 
             self.logger.debug("busDT=%s", str(busDT))
             self.gridList.append(busDT)
@@ -1048,8 +1082,8 @@ class singleUI(object):
         try:
             self.logger.debug("b=%s", b)
             self.gridWidgets['grid.message'].value = ''
-            name = self.gridWidgets["grid.loaded"].value
-            busDT = [x for x in self.gridList if x.name == name][0]
+            value = self.gridWidgets["grid.loaded"].value
+            busDT = self.gridList[value]
             newDT = BUSDataTable()
             newDT.name = self.gridWidgets["grid.name"].value
             newDT.source = busDT.source
@@ -1057,8 +1091,15 @@ class singleUI(object):
             newDT.sortList = ast.literal_eval(self.gridWidgets["grid.sortList"].value)
             newDT.sortAscendingList = ast.literal_eval(self.gridWidgets["grid.sortAscendingList"].value)
             newDT.columnList = ast.literal_eval(self.gridWidgets["grid.columnList"].value)
+            newDT.selectFollow = self.gridWidgets["grid.selectFollow"].value
             self.logger.debug("newDT=%s", str(newDT))
-            # if newDT.name == busDT.name :
+            success, message = newDT.init_df()
+            if success:
+                self.gridList[value] = newDT
+                self.initGridListPanel()
+                self.gridWidgets['grid.message'].value = 'Success:' + message
+            else:
+                self.gridWidgets['grid.message'].value = 'Failed:' + message
 
         except Exception as e:
             self.logger.exception("")
@@ -1067,6 +1108,7 @@ class singleUI(object):
             except:
                 self.logger.exception("")
                 raise
+        return success
 
     def on_grid_load_clicked(self, b):
         try:
@@ -1078,6 +1120,28 @@ class singleUI(object):
             x = ",".join(map(str, idList))
             self.logger.debug("x=%s", str(x))
             self.idWList.value =x
+
+        except Exception as e:
+            self.logger.exception("")
+            raise
+    
+    def on_grid_save_clicked(self, b):
+        try:
+            self.logger.debug("b=%s", b)
+            self.gridWidgets['grid.message'].value = ''
+            value = self.gridWidgets["grid.loaded"].value
+            busDT = self.gridList[value]
+
+        except Exception as e:
+            self.logger.exception("")
+            raise
+
+    def on_grid_remove_clicked(self, b):
+        try:
+            self.logger.debug("b=%s", b)
+            self.gridWidgets['grid.message'].value = ''
+            value = self.gridWidgets["grid.loaded"].value
+            busDT = self.gridList[value]
 
         except Exception as e:
             self.logger.exception("")
