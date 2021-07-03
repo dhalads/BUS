@@ -212,13 +212,12 @@ class busUI(object):
         singleUIObj = singleUI()
         singleUIObj.parent = self
         singleUIObj.initUI()
-        tmp = []
-        tmp.append(singleUIObj.getOutput())
-        singleVBox = widgets.VBox(tmp)
-        self.UI = singleVBox
-        display(singleVBox)
-        # display(singleUIObj.qgrid1)
-
+        # tmp = []
+        # tmp.append(singleUIObj.getOutput())
+        # singleVBox = widgets.VBox(tmp)
+        # self.UI = singleVBox
+        # display(singleVBox)
+        display(singleUIObj.getOutput())
         singleUIObj.initObserve()
 
 
@@ -909,7 +908,7 @@ class singleUI(object):
 
         except:
             self.logger.exception("")
-            self.error(self.segList)
+            self.logger.error("segList=%s", str(self.segList))
             raise
 
     def getLayoutGrid(self, colnum, rownum):
@@ -1195,6 +1194,7 @@ class singleUI(object):
                 self.gridWidgets["grid.selectFollow"].value = str(busDT.selectFollow)
                 self.logger.debug("busDT=%s", str(busDT))
             else:
+                busDT = None
                 self.gridWidgets["grid.name"].value = ""
                 self.gridWidgets["grid.sourceText"].value = ""
                 self.gridWidgets["grid.queryString"].value = ""
@@ -1202,8 +1202,6 @@ class singleUI(object):
                 self.gridWidgets["grid.sortAscendingList"].value = str([])
                 self.gridWidgets["grid.columnList"].value = str([])
                 self.gridWidgets["grid.selectFollow"].value = 'None'
-                self.logger.debug("busDT=%s", str(busDT))
-
         except:
             self.logger.exception("busDT=%s", str(busDT))
             raise
@@ -1258,7 +1256,14 @@ class singleUI(object):
                     display='flex')
         controlW = widgets.HBox([self.idWList, self.buttonLoad, self.select_id, self.buttonPrev, self.buttonNext, self.select_num_to_display, self.imageWidth,
                 self.imageSelect, self.displayOrientation, self.buttonApplyImgSelect], layout=box_layout)
-        output = widgets.VBox([self.initGridUI(), controlW, self.initComparisonView(), self.initDataFramePanel()])
+        box_layout = widgets.Layout(overflow='scroll',
+                    border='3px solid black',
+                    width='100%',
+                    height='100%'
+                    # flex_flow='row wrap',
+                    # display='flex'
+                    )
+        output = widgets.VBox([self.initGridUI(), controlW, self.initComparisonView(), self.initDataFramePanel()], layout=box_layout)
         
         self.baseW = output
         return(output)
