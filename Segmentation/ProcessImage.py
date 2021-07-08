@@ -142,7 +142,8 @@ class ProcessImage(object):
         segList.loadDataSetB(ids)
         size = len(segList.BUSList)
         print(f"segList size={size}")
-        segList.saveGTStats()
+        # segList.saveGTStats()
+        segList.saveROIStats()
 
 
 
@@ -1094,7 +1095,7 @@ class singleUI(object):
             busDT = self.gridList[value]
             newDT = BUSDataTable()
             newDT.name = self.gridWidgets["grid.name"].value
-            newDT.source = busDT.source
+            newDT.source = self.gridWidgets["grid.sourceText"].value
             newDT.queryString = self.gridWidgets["grid.queryString"].value
             newDT.sortList = ast.literal_eval(self.gridWidgets["grid.sortList"].value)
             newDT.sortAscendingList = ast.literal_eval(self.gridWidgets["grid.sortAscendingList"].value)

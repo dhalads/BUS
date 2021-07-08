@@ -33,7 +33,7 @@ class BUSSegmentorList(object):
         self.idString = None
         self.idList = None
 
-    def loadDataSetB(self, ids):
+    def loadDataSetA(self, ids):
         countFileNotFound = 0
         try:
             isList = ids
@@ -50,6 +50,63 @@ class BUSSegmentorList(object):
                         self.BUSList.sort(key=lambda x: x.id)
                     # raise Exception("Made it ok.")
                 except FileNotFoundError as nf:
+                    self.isError = True
+                    msg = f"file not found name={name}, id={id}"
+                    self.logger.error(msg)
+                    # self.logger.error('file not found name=%s, id=%s', name, id)
+                    self.errorMessages.append(msg)
+                    countFileNotFound += 1
+                    pass
+                except Exception as e:
+                    pass
+                    # self.logger.error(e)
+                    # self.logger.exception(e)
+                    self.logger.exception("help me")
+                    raise
+        except Exception as e:
+            pass
+            # self.logger.error(e)
+            # self.logger.exception(e)
+            self.logger.exception("help me2")
+            raise
+        else:
+            pass
+        finally:
+            pass
+        self.logger.debug("Results loadDataSetB: loaded=%s, failed=%s", len(self.BUSList), countFileNotFound, exc_info=True)
+
+    def loadDataSetB(self, ids, dataSet="Ellis"):
+        countFileNotFound = 0
+        try:
+            isList = ids
+            if dataSet=="B":
+                basePath = Common.getHomeProjectPath() / "Datasets" / "BUS_Dataset_B"
+            else:
+                basePath = Common.getHomeProjectPath() / "Datasets" / "Ellis" / "BUSL_RLE"
+            for id in ids:
+                try:
+                    if not self.isLoaded(id):
+                        seg = BUSSegmentor()
+                        seg.id = id
+                        if dataSet=="B":
+                            name = str(id).zfill(6) + ".png"
+                            nameGT = str(id).zfill(6) + ".png"
+                            imagePath = basePath / "originalx" / name
+                            imageGTPath = basePath / "GT" / nameGT
+                        else:
+                            name = "Snap" + str(id).zfill(3) + "a.png"
+                            nameGT = "Snap" + str(id).zfill(3) + "m.png"
+                            imagePath = basePath / name
+                            imageGTPath = basePath / nameGT
+                        
+                        seg.loadImage(imagePath)
+                        seg.loadImageGT(imageGTPath)
+                        seg.findContours(addImages=True)
+                        self.BUSList.append(seg)
+                        self.BUSList.sort(key=lambda x: x.id)
+                    # raise Exception("Made it ok.")
+                except FileNotFoundError as nf:
+                    self.logger.exception("")
                     self.isError = True
                     msg = f"file not found name={name}, id={id}"
                     self.logger.error(msg)

@@ -51,25 +51,23 @@ class BUSSegmentor(object):
         output['response'] = response
         self.images[name] = output
 
-    def loadImage(self, filename):
-        self.imageName = filename
-        path = Common.getImagePath()
-        path = path / "original" / filename
+    def loadImage(self, imagePath):
         try:
-            image = Image.open(path).convert('L') # Make sure to convert to grayscale
-        except FileNotFoundError:
-            filename = str(self.id) + ".png"
-            path = Common.getImagePath() / "original" / filename
-            image = Image.open(path).convert('L')
+            image = Image.open(imagePath).convert('L') # Make sure to convert to grayscale
+        except FileNotFoundError as e:
+            self.logger.debug("imagePath not found:%s", imagePath)
+            path, filename = os.path.split(imagePath)
+            newfilename = str(self.id) + ".png"
+            newpath = os.path.join(path, newfilename)
+            self.logger.debug("newPath:%s", newpath)
+            image = Image.open(newpath).convert('L')
         self.PILimage= image
         # image_inv = ImageOps.invert(image)
         bus = asarray(image)
         self.image = bus
 
-    def loadImageGT(self):
-        path = Common.getImagePath()
-        path = path / "GT" / self.imageName
-        image = Image.open(path).convert('L') # Make sure to convert to grayscale
+    def loadImageGT(self, imageGTPath):
+        image = Image.open(imageGTPath).convert('L') # Make sure to convert to grayscale
         self.PILimageGT = image
         # image_inv = ImageOps.invert(image)
         bus = asarray(image)
@@ -247,6 +245,8 @@ class BUSSegmentor(object):
         else:
             bestCnt = None
             bestStats = None
+            if addImages:
+                self.addImage("WithFilteredContours", tmpImg, None, None, None)
         return((bestCnt, bestStats))
 
     def createCannyEdgedImage(self):
