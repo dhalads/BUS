@@ -1,0 +1,9 @@
+{
+    "source": "data/dataScored.csv",
+    "queryString": "",
+    "sortList": [],
+    "sortAscendingList": [],
+    "columnList": [],
+    "isFollowImageList": false,
+    "isFollowSingle": false
+}

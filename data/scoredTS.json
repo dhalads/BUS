@@ -1,6 +1,6 @@
 {
     "source": "data/dataScored.csv",
-    "queryString": "`BI-RADS`!='7' and Quality!=7",
+    "queryString": "`BI-RADS`!='7' and Quality!=7 and `Orientation` != \"Parallel\"",
     "sortList": [
         "id",
         "Biopsy"

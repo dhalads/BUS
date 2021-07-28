@@ -2,8 +2,8 @@
 # To add a new markdown cell, type '# %% [markdown]'
 # %%
 
-# from IPython.core.display import display, HTML
-# display(HTML("<style>.container { width:100% !important; }</style>"))
+from IPython.core.display import display, HTML
+display(HTML("<style>.container { width:100% !important;  height: 100%}</style>"))
 
 from ProcessImage import ProcessImage
 pimg = ProcessImage()
